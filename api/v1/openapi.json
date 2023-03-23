@@ -1,0 +1,5459 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Metronome",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.metronome.com/v1",
+      "description": "Production server"
+    }
+  ],
+  "paths": {
+    "/alerts/archive": {
+      "post": {
+        "description": "Archive an alert",
+        "operationId": "archiveAlert",
+        "summary": "Archive an existing alert",
+        "tags": [
+          "Alerts"
+        ],
+        "requestBody": {
+          "description": "The ID of the alert to archive",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Id"
+              },
+              "example": {
+                "id": "8deed800-1b7a-495d-a207-6c52bac54dc9"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Id"
+                    }
+                  }
+                },
+                "example": {
+                  "data": {
+                    "id": "8deed800-1b7a-495d-a207-6c52bac54dc9"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/alerts/create": {
+      "post": {
+        "description": "Create an alert",
+        "operationId": "createAlert",
+        "summary": "Create a new alert",
+        "tags": [
+          "Alerts"
+        ],
+        "requestBody": {
+          "description": "The details of the alert to create",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCustomerAlertPayload"
+              },
+              "example": {
+                "alert_type": "low_credit_balance_reached",
+                "credit_type_id": "2714e483-4ff1-48e4-9e25-ac732e8f24f2",
+                "name": "$100 credit balance alert for single customer",
+                "threshold": 10000,
+                "customer_id": "4db51251-61de-4bfe-b9ce-495e244f3491"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Id"
+                    }
+                  }
+                },
+                "example": {
+                  "data": {
+                    "id": "58fb0650-e54a-4d17-93cb-ba8e56c32c65"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/customer-alerts/get": {
+      "post": {
+        "description": "Get the customer alert status and alert information for the specified customer and alert",
+        "operationId": "getCustomerAlert",
+        "summary": "Get a customer alert",
+        "tags": [
+          "Alerts"
+        ],
+        "requestBody": {
+          "description": "The customer ID and alert ID of the customer alert to get",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetCustomerAlertPayload"
+              },
+              "example": {
+                "customer_id": "9b85c1c1-5238-4f2a-a409-61412905e1e1",
+                "alert_id": "8deed800-1b7a-495d-a207-6c52bac54dc9"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/CustomerAlert"
+                    }
+                  }
+                },
+                "example": {
+                  "data": {
+                    "customer_status": "in_alarm",
+                    "alert": {
+                      "id": "8deed800-1b7a-495d-a207-6c52bac54dc9",
+                      "name": "Low credit balance alert",
+                      "type": "low_credit_balance_reached",
+                      "status": "enabled",
+                      "credit_type": {
+                        "id": "2714e483-4ff1-48e4-9e25-ac732e8f24f2",
+                        "name": "USD (cents)"
+                      },
+                      "threshold": 0,
+                      "updated_at": "2022-01-01T00:00:00Z"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/customer-alerts/list": {
+      "post": {
+        "description": "Fetch all customer alert statuses and alert information for a customer",
+        "operationId": "listCustomerAlerts",
+        "summary": "List customer alerts",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/NextPage"
+          }
+        ],
+        "tags": [
+          "Alerts"
+        ],
+        "requestBody": {
+          "description": "The customer alerts query to run",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ListCustomerAlertsPayload"
+              },
+              "example": {
+                "customer_id": "9b85c1c1-5238-4f2a-a409-61412905e1e1"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data",
+                    "next_page"
+                  ],
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/CustomerAlert"
+                      }
+                    },
+                    "next_page": {
+                      "type": "string",
+                      "nullable": true
+                    }
+                  }
+                },
+                "example": {
+                  "data": [
+                    {
+                      "customer_status": "in_alarm",
+                      "alert": {
+                        "id": "8deed800-1b7a-495d-a207-6c52bac54dc9",
+                        "name": "Low credit balance alert",
+                        "type": "low_credit_balance_reached",
+                        "status": "enabled",
+                        "credit_type": {
+                          "id": "2714e483-4ff1-48e4-9e25-ac732e8f24f2",
+                          "name": "USD (cents)"
+                        },
+                        "threshold": 0,
+                        "updated_at": "2022-01-01T00:00:00Z"
+                      }
+                    },
+                    {
+                      "customer_status": "ok",
+                      "alert": {
+                        "id": "3d45fdc3-e237-4acd-a7d9-ccfeb40e71b8",
+                        "name": "Spend threshold alert",
+                        "type": "spend_threshold_reached",
+                        "status": "enabled",
+                        "credit_type": {
+                          "id": "2714e483-4ff1-48e4-9e25-ac732e8f24f2",
+                          "name": "USD (cents)"
+                        },
+                        "threshold": 1000,
+                        "updated_at": "2022-01-01T00:00:00Z"
+                      }
+                    }
+                  ],
+                  "next_page": null
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/plans": {
+      "get": {
+        "description": "List all available plans.",
+        "operationId": "listPlans",
+        "summary": "List plans",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PageLimit"
+          },
+          {
+            "$ref": "#/components/parameters/NextPage"
+          }
+        ],
+        "tags": [
+          "Plans"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data",
+                    "next_page"
+                  ],
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Plan"
+                      }
+                    },
+                    "next_page": {
+                      "type": "string",
+                      "nullable": true
+                    }
+                  }
+                },
+                "example": {
+                  "data": [
+                    {
+                      "id": "94293d66-aa05-4a8e-881a-c90872047b67",
+                      "name": "Standard",
+                      "description": "Standard self-serve plan"
+                    },
+                    {
+                      "id": "d2c06dae-9549-4d7d-bc04-b78dd3d241b8",
+                      "name": "Aperture, Inc.",
+                      "description": "Custom enterprise plan for Aperture with ramped minimums"
+                    }
+                  ],
+                  "next_page": null
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/planDetails/{plan_id}": {
+      "get": {
+        "description": "Fetch high level details of a specific plan.",
+        "operationId": "getPlanDetails",
+        "summary": "Get plan details",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PlanId"
+          }
+        ],
+        "tags": [
+          "Plans"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/PlanDetail"
+                    }
+                  }
+                },
+                "example": {
+                  "data": {
+                    "id": "d46c3bce-40a6-4fbf-9b45-fcb00d45ad5f",
+                    "name": "Plan with Minimums",
+                    "description": "A plan with minimums",
+                    "credit_grants": [
+                      {
+                        "name": "Acme Corp Promotional Credit Grant",
+                        "amount_granted": 2400,
+                        "amount_paid": 1500,
+                        "effective_duration": 3,
+                        "priority": "1",
+                        "send_invoice": true,
+                        "reason": "Prepaid grant",
+                        "recurrence_interval": 1,
+                        "amount_granted_credit_type": {
+                          "id": "2714e483-4ff1-48e4-9e25-ac732e8f24f2",
+                          "name": "USD (cents)"
+                        },
+                        "amount_paid_credit_type": {
+                          "id": "2714e483-4ff1-48e4-9e25-ac732e8f24f2",
+                          "name": "USD (cents)"
+                        }
+                      }
+                    ],
+                    "minimums": [
+                      {
+                        "name": "Invoice minimum",
+                        "value": 10000,
+                        "start_period": 0,
+                        "credit_type": {
+                          "id": "2714e483-4ff1-48e4-9e25-ac732e8f24f2",
+                          "name": "USD (cents)"
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/planDetails/{plan_id}/charges": {
+      "get": {
+        "description": "Fetches a list of charges of a specific plan.",
+        "operationId": "getPlanCharges",
+        "summary": "List plan charges",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PlanId"
+          },
+          {
+            "$ref": "#/components/parameters/PageLimit"
+          },
+          {
+            "$ref": "#/components/parameters/NextPage"
+          }
+        ],
+        "tags": [
+          "Plans"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data",
+                    "next_page"
+                  ],
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/PlanCharge"
+                      }
+                    },
+                    "next_page": {
+                      "type": "string",
+                      "nullable": true
+                    }
+                  }
+                },
+                "example": {
+                  "data": [
+                    {
+                      "id": "a23b3cf4-47fb-4c3f-bb3d-9e64f7704015",
+                      "name": "Server Hours",
+                      "product_name": "Dedicated Server",
+                      "start_period": 0,
+                      "credit_type": {
+                        "id": "2714e483-4ff1-48e4-9e25-ac732e8f24f2",
+                        "name": "USD (cents)"
+                      },
+                      "charge_type": "usage",
+                      "prices": [
+                        {
+                          "value": 50,
+                          "tier": 0
+                        }
+                      ]
+                    }
+                  ],
+                  "next_page": "31646362333134302d363735362d346661372d396436362d383"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/credits/createGrant": {
+      "post": {
+        "description": "Create a new credit grant",
+        "operationId": "createGrant",
+        "summary": "Create a credit grant",
+        "tags": [
+          "Credit grants"
+        ],
+        "requestBody": {
+          "description": "The details of the credit grant to create.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCreditGrantPayload"
+              },
+              "example": {
+                "customer_id": "9b85c1c1-5238-4f2a-a409-61412905e1e1",
+                "grant_amount": {
+                  "amount": 1000,
+                  "credit_type_id": "5ae401dc-a648-4b49-9ac3-391bb5bc4d7b"
+                },
+                "name": "Acme Corp Promotional Credit Grant",
+                "reason": "Incentivize new customer",
+                "effective_at": "2022-02-01T00:00:00Z",
+                "expires_at": "2022-04-01T00:00:00Z",
+                "paid_amount": {
+                  "amount": 5000,
+                  "credit_type_id": "2714e483-4ff1-48e4-9e25-ac732e8f24f2"
+                },
+                "priority": 0.5
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Id"
+                    }
+                  }
+                },
+                "example": {
+                  "data": {
+                    "id": "8b24d3dc-6db5-432d-9416-8439b3fbf242"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/credits/voidGrant": {
+      "post": {
+        "description": "Void a credit grant",
+        "operationId": "voidGrant",
+        "summary": "Void a credit grant",
+        "tags": [
+          "Credit grants"
+        ],
+        "requestBody": {
+          "description": "The ID of the grant to void",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Id"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Id"
+                    }
+                  }
+                },
+                "example": {
+                  "data": {
+                    "id": "8b24d3dc-6db5-432d-9416-8439b3fbf242"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/credits/listGrants": {
+      "post": {
+        "description": "List credit grants. This list does not included voided grants.",
+        "operationId": "listGrants",
+        "summary": "List credit grants",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/NextPage"
+          }
+        ],
+        "requestBody": {
+          "description": "Filters specifying which credit grants should be included",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ListCreditGrantPayload"
+              },
+              "example": {
+                "credit_type_ids": [
+                  "2714e483-4ff1-48e4-9e25-ac732e8f24f2"
+                ],
+                "customer_ids": [
+                  "d7abd0cd-4ae9-4db7-8676-e986a4ebd8dc",
+                  "0e5b8609-d901-4992-b394-c3c2e3f37b1c"
+                ],
+                "not_expiring_before": "2022-02-01T00:00:00Z",
+                "effective_before": "2022-02-01T00:00:00Z"
+              }
+            }
+          }
+        },
+        "tags": [
+          "Credit grants"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data",
+                    "next_page"
+                  ],
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/CreditGrant"
+                      }
+                    },
+                    "next_page": {
+                      "type": "string",
+                      "nullable": true
+                    }
+                  }
+                },
+                "example": {
+                  "data": [
+                    {
+                      "id": "9acbc1d0-2044-44c4-8577-f6078a1d8cd2",
+                      "name": "Initial credit purchase",
+                      "customer_id": "b310b282-d5cf-4e4f-915f-d8c3c4971e45",
+                      "reason": "Prepayment",
+                      "effective_at": "2022-01-01T00:00:00.000Z",
+                      "expires_at": "2022-04-01T00:00:00.000Z",
+                      "priority": 0.5,
+                      "grant_amount": {
+                        "amount": 100,
+                        "credit_type": {
+                          "id": "fa2f1b3d-9d52-4951-a099-25991fd394d6",
+                          "name": "cloud consumption units"
+                        }
+                      },
+                      "paid_amount": {
+                        "amount": 10,
+                        "credit_type": {
+                          "id": "2714e483-4ff1-48e4-9e25-ac732e8f24f2",
+                          "name": "USD (cents)"
+                        }
+                      },
+                      "balance": {
+                        "including_pending": 80,
+                        "excluding_pending": 80,
+                        "effective_at": "2022-02-01T00:00:00.000Z"
+                      },
+                      "deductions": [
+                        {
+                          "amount": 20,
+                          "reason": "Automated invoice deduction",
+                          "running_balance": 80,
+                          "effective_at": "2022-02-01T00:00:00.000Z",
+                          "created_by": "Metronome System",
+                          "credit_grant_id": "9acbc1d0-2044-44c4-8577-f6078a1d8cd2",
+                          "invoice_id": "b6a60e95-15f4-403c-be40-f1c1d58cee20"
+                        }
+                      ],
+                      "pending_deductions": [],
+                      "custom_fields": {
+                        "x_account_id": "KyVnHhSBWl7eY2bl"
+                      }
+                    }
+                  ],
+                  "next_page": null
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/credit-types/list": {
+      "get": {
+        "description": "List all pricing units (known in the API by the legacy term \"credit types\").",
+        "operationId": "listCreditTypes",
+        "summary": "List all pricing units",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PageLimit"
+          },
+          {
+            "$ref": "#/components/parameters/NextPage"
+          }
+        ],
+        "tags": [
+          "Credit grants"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data",
+                    "next_page"
+                  ],
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "properties": {
+                          "name": {
+                            "type": "string"
+                          },
+                          "id": {
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "is_currency": {
+                            "type": "boolean"
+                          }
+                        }
+                      }
+                    },
+                    "next_page": {
+                      "type": "string",
+                      "nullable": true
+                    }
+                  }
+                },
+                "example": {
+                  "data": [
+                    {
+                      "id": "2714e483-4ff1-48e4-9e25-ac732e8f24f2",
+                      "name": "USD (cents)",
+                      "is_currency": true
+                    },
+                    {
+                      "id": "fa2f1b3d-9d52-4951-a099-25991fd394d6",
+                      "name": "cloud consumption units",
+                      "is_currency": false
+                    }
+                  ],
+                  "next_page": null
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/customers/{customer_id}/plans": {
+      "get": {
+        "description": "List the given customer's plans in reverse-chronological order.",
+        "operationId": "listCustomerPlans",
+        "summary": "List customer plans",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/CustomerId"
+          },
+          {
+            "$ref": "#/components/parameters/PageLimit"
+          },
+          {
+            "$ref": "#/components/parameters/NextPage"
+          }
+        ],
+        "tags": [
+          "Plans"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data",
+                    "next_page"
+                  ],
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/CustomerPlan"
+                      }
+                    },
+                    "next_page": {
+                      "type": "string",
+                      "nullable": true
+                    }
+                  }
+                },
+                "example": {
+                  "data": [
+                    {
+                      "id": "7aa11640-0703-4600-8eb9-293f535a6b74",
+                      "plan_id": "94293d66-aa05-4a8e-881a-c90872047b67",
+                      "plan_name": "Standard",
+                      "starting_on": "2021-01-01T00:00:00Z",
+                      "trial_info": {
+                        "ending_before": "2021-01-15T00:00:00Z",
+                        "spending_caps": []
+                      }
+                    }
+                  ],
+                  "next_page": null
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/customers/{customer_id}/plans/add": {
+      "post": {
+        "description": "Associate an existing customer with a plan for a specified date range.  See the [price adjustments documentation](https://docs.metronome.com/pricing/managing-plans/#price-adjustments) for details on the price adjustments.",
+        "operationId": "addPlanToCustomer",
+        "summary": "Add plan to customer",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/CustomerId"
+          }
+        ],
+        "requestBody": {
+          "description": "The customer ID, plan ID, and date range for the plan to be applied",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddPlanToCustomerPayload"
+              },
+              "example": {
+                "plan_id": "d2c06dae-9549-4d7d-bc04-b78dd3d241b8",
+                "starting_on": "2021-02-01T00:00:00Z",
+                "ending_before": "2022-02-01T00:00:00Z"
+              }
+            }
+          }
+        },
+        "tags": [
+          "Plans"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Id"
+                    }
+                  }
+                },
+                "example": {
+                  "data": {
+                    "id": "8b24d3dc-6db5-432d-9416-8439b3fbf242"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/customers/{customer_id}/plans/{customer_plan_id}/priceAdjustments": {
+      "get": {
+        "description": "Lists a customer plans adjustments. See the [price adjustments documentation](https://docs.metronome.com/pricing/managing-plans/#price-adjustments) for details.",
+        "operationId": "getPlanPriceAdjustments",
+        "summary": "Get customer plan adjustments",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/CustomerId"
+          },
+          {
+            "$ref": "#/components/parameters/CustomerPlanId"
+          },
+          {
+            "$ref": "#/components/parameters/PageLimit"
+          },
+          {
+            "$ref": "#/components/parameters/NextPage"
+          }
+        ],
+        "tags": [
+          "Plans"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data",
+                    "next_page"
+                  ],
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/PriceAdjustment"
+                      }
+                    },
+                    "next_page": {
+                      "type": "string",
+                      "nullable": true
+                    }
+                  }
+                },
+                "example": {
+                  "data": [
+                    {
+                      "charge_id": "8b24d3dc-6db5-432d-9416-8439b3fbf242",
+                      "charge_type": "usage",
+                      "start_period": 0,
+                      "prices": [
+                        {
+                          "adjustment_type": "fixed",
+                          "value": -0.05
+                        },
+                        {
+                          "adjustment_type": "quantity",
+                          "value": 2
+                        },
+                        {
+                          "adjustment_type": "override",
+                          "tier": 2,
+                          "value": 4
+                        }
+                      ]
+                    },
+                    {
+                      "charge_id": "2714e483-4ff1-48e4-9e25-ac732e8f24f2",
+                      "charge_type": "fixed",
+                      "start_period": 1,
+                      "prices": [
+                        {
+                          "adjustment_type": "percentage",
+                          "value": -5
+                        }
+                      ]
+                    }
+                  ],
+                  "next_page": "31646362333134302d363735362d346661372d396436362d383"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/customers/{customer_id}/plans/{customer_plan_id}/end": {
+      "post": {
+        "description": "Change the end date of a customer's plan.",
+        "operationId": "endCustomerPlan",
+        "summary": "End customer plan",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/CustomerId"
+          },
+          {
+            "$ref": "#/components/parameters/CustomerPlanId"
+          }
+        ],
+        "requestBody": {
+          "description": "The date at which this customer's plan should end",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EndCustomerPlanPayload"
+              },
+              "example": {
+                "ending_before": "2021-02-01T00:00:00Z"
+              }
+            }
+          }
+        },
+        "tags": [
+          "Plans"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/ingest": {
+      "post": {
+        "description": "Send usage events to Metronome. The body of this request is expected to be a JSON array of between 1 and 100 usage events. Compressed request bodies are supported with a `Content-Encoding: gzip` header. See [Getting usage into Metronome](https://docs.metronome.com/getting-usage-data-into-metronome/overview) to learn more about usage events.\n",
+        "operationId": "ingest",
+        "summary": "Ingest events",
+        "tags": [
+          "Usage"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 100,
+                "items": {
+                  "$ref": "#/components/schemas/Event"
+                }
+              },
+              "example": [
+                {
+                  "transaction_id": "2021-01-01T00:00:00Z_cluster42",
+                  "customer_id": "team@example.com",
+                  "event_type": "heartbeat",
+                  "timestamp": "2021-01-01T00:00:00Z",
+                  "properties": {
+                    "cluster_id": "42",
+                    "cpu_seconds": 60,
+                    "region": "Europe"
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "/usage/groups": {
+      "post": {
+        "description": "Fetch aggregated usage data for the specified customer, billable-metric, and optional group, broken into intervals of the specified length.",
+        "operationId": "getPagedUsage",
+        "summary": "Get usage with paginated groups",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PageLimit"
+          },
+          {
+            "$ref": "#/components/parameters/NextPage"
+          }
+        ],
+        "requestBody": {
+          "description": "The usage query to run",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PagedUsageQueryPayload"
+              },
+              "example": {
+                "customer_id": "04ca7e72-4229-4a6e-ab11-9f7376fccbcb",
+                "billable_metric_id": "222796fd-d29c-429e-89b2-549fabda4ed6",
+                "starting_on": "2021-01-01T00:00:00Z",
+                "ending_before": "2021-01-03T00:00:00Z",
+                "window_size": "day",
+                "group_by": {
+                  "key": "region",
+                  "values": [
+                    "US-East",
+                    "US-West",
+                    "EU-Central"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Usage"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data",
+                    "next_page"
+                  ],
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/PagedUsageAggregate"
+                      }
+                    },
+                    "next_page": {
+                      "type": "string",
+                      "nullable": true
+                    }
+                  }
+                },
+                "example": {
+                  "data": [
+                    {
+                      "starting_on": "2021-01-01T00:00:00+00:00",
+                      "ending_before": "2021-01-02T00:00:00+00:00",
+                      "group_key": null,
+                      "group_value": null,
+                      "value": 1234
+                    },
+                    {
+                      "starting_on": "2021-01-02T00:00:00+00:00",
+                      "ending_before": "2021-01-03T00:00:00+00:00",
+                      "group_key": "region",
+                      "group_value": "US-East",
+                      "value": 567
+                    }
+                  ],
+                  "next_page": null
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/usage": {
+      "post": {
+        "description": "Fetch aggregated usage data for multiple customers and billable-metrics, broken into intervals of the specified length.",
+        "operationId": "getUsageBatch",
+        "summary": "Get usage (batch)",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/NextPage"
+          }
+        ],
+        "requestBody": {
+          "description": "The usage query to run",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UsageBatchQueryPayload"
+              },
+              "example": {
+                "window_size": "day",
+                "starting_on": "2021-01-01T00:00:00Z",
+                "ending_before": "2021-01-03T00:00:00Z"
+              }
+            }
+          }
+        },
+        "tags": [
+          "Usage"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data",
+                    "next_page"
+                  ],
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/UsageBatchAggregate"
+                      }
+                    },
+                    "next_page": {
+                      "type": "string",
+                      "nullable": true
+                    }
+                  }
+                },
+                "example": {
+                  "data": [
+                    {
+                      "customer_id": "d7abd0cd-4ae9-4db7-8676-e986a4ebd8dc",
+                      "billable_metric_id": "9570e4f3-d1da-4b95-ba81-bd40ee002727",
+                      "billable_metric_name": "CPU hours",
+                      "start_timestamp": "2021-01-01T00:00:00+00:00",
+                      "end_timestamp": "2021-01-02T00:00:00+00:00",
+                      "value": 1234
+                    },
+                    {
+                      "customer_id": "d7abd0cd-4ae9-4db7-8676-e986a4ebd8dc",
+                      "billable_metric_id": "9570e4f3-d1da-4b95-ba81-bd40ee002727",
+                      "billable_metric_name": "CPU hours",
+                      "start_timestamp": "2021-01-02T00:00:00+00:00",
+                      "end_timestamp": "2021-01-03T00:00:00+00:00",
+                      "value": 1234
+                    }
+                  ],
+                  "next_page": null
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/customers/{customer_id}": {
+      "get": {
+        "description": "Get a customer by Metronome ID.",
+        "operationId": "getCustomer",
+        "summary": "Get customer",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/CustomerId"
+          }
+        ],
+        "tags": [
+          "Customers"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/CustomerDetail"
+                    }
+                  }
+                },
+                "example": {
+                  "data": {
+                    "id": "d7abd0cd-4ae9-4db7-8676-e986a4ebd8dc",
+                    "external_id": "team@example.com",
+                    "ingest_aliases": [
+                      "team@example.com"
+                    ],
+                    "name": "Example, Inc.",
+                    "customer_config": {
+                      "salesforce_account_id": "0015500001WO1ZiABL"
+                    },
+                    "custom_fields": {
+                      "x_account_id": "KyVnHhSBWl7eY2bl"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/customers/{customer_id}/billable-metrics": {
+      "get": {
+        "description": "List all billable metrics.",
+        "operationId": "listBillableMetrics",
+        "summary": "List billable metrics",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/CustomerId"
+          },
+          {
+            "$ref": "#/components/parameters/PageLimit"
+          },
+          {
+            "$ref": "#/components/parameters/NextPage"
+          },
+          {
+            "name": "on_current_plan",
+            "in": "query",
+            "description": "If true, the list of metrics will be filtered to just ones that are on the customer's current plan",
+            "required": false,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "tags": [
+          "Usage"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data",
+                    "next_page"
+                  ],
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/BillableMetric"
+                      }
+                    },
+                    "next_page": {
+                      "type": "string",
+                      "nullable": true
+                    }
+                  }
+                },
+                "example": {
+                  "data": [
+                    {
+                      "name": "data transfer (GB)",
+                      "id": "9570e4f3-d1da-4b95-ba81-bd40ee002727",
+                      "group_by": [
+                        "cluster",
+                        "region"
+                      ]
+                    },
+                    {
+                      "name": "CPU hours",
+                      "id": "13117714-3f05-48e5-a6e9-a66093f13b4d"
+                    }
+                  ],
+                  "next_page": null
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/customers": {
+      "get": {
+        "description": "List all customers.",
+        "operationId": "listCustomers",
+        "summary": "List customers",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PageLimit"
+          },
+          {
+            "$ref": "#/components/parameters/NextPage"
+          },
+          {
+            "in": "query",
+            "name": "ingest_alias",
+            "description": "Filter the customer list by ingest_alias",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "customer_ids",
+            "description": "Filter the customer list by customer_id.  Up to 100 ids can be provided.",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "tags": [
+          "Customers"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data",
+                    "next_page"
+                  ],
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/CustomerDetail"
+                      }
+                    },
+                    "next_page": {
+                      "type": "string",
+                      "nullable": true
+                    }
+                  }
+                },
+                "example": {
+                  "data": [
+                    {
+                      "id": "d7abd0cd-4ae9-4db7-8676-e986a4ebd8dc",
+                      "external_id": "team@example.com",
+                      "ingest_aliases": [
+                        "team@example.com"
+                      ],
+                      "name": "Example, Inc.",
+                      "customer_config": {
+                        "salesforce_account_id": "0015500001WO1ZiABL"
+                      },
+                      "custom_fields": {
+                        "x_account_id": "KyVnHhSBWl7eY2bl"
+                      }
+                    }
+                  ],
+                  "next_page": null
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "Create a new customer",
+        "operationId": "createCustomer",
+        "summary": "Create customer",
+        "tags": [
+          "Customers"
+        ],
+        "requestBody": {
+          "description": "The customer to create",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCustomerPayload"
+              },
+              "example": {
+                "external_id": "team@example.com",
+                "name": "Example, Inc."
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Customer"
+                    }
+                  }
+                },
+                "example": {
+                  "data": {
+                    "id": "d7abd0cd-4ae9-4db7-8676-e986a4ebd8dc",
+                    "external_id": "team@example.com",
+                    "ingest_aliases": [
+                      "team@example.com"
+                    ],
+                    "name": "Aperture, Inc."
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "A customer with this ID already exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/customers/{customer_id}/setIngestAliases": {
+      "post": {
+        "description": "Sets the ingest aliases for a customer. Ingest aliases can be used in the `customer_id` field when sending usage events to Metronome. This call is idempotent. It fully replaces the set of ingest aliases for the given customer.\n",
+        "operationId": "setIngestAliases",
+        "summary": "Set customer ingest aliases",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/CustomerId"
+          }
+        ],
+        "tags": [
+          "Customers"
+        ],
+        "requestBody": {
+          "description": "The aliases to add",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetIngestAliasesPayload"
+              },
+              "example": {
+                "ingest_aliases": [
+                  "team@example.com"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/customers/{customer_id}/setName": {
+      "post": {
+        "description": "Updates the specified customer's name.\n",
+        "operationId": "setCustomerName",
+        "summary": "Set customer name",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/CustomerId"
+          }
+        ],
+        "tags": [
+          "Customers"
+        ],
+        "requestBody": {
+          "description": "The customer name",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetCustomerNamePayload"
+              },
+              "example": {
+                "name": "Example, Inc."
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Customer"
+                    }
+                  }
+                },
+                "example": {
+                  "data": {
+                    "id": "d7abd0cd-4ae9-4db7-8676-e986a4ebd8dc",
+                    "external_id": "team@example.com",
+                    "ingest_aliases": [
+                      "team@example.com"
+                    ],
+                    "name": "Example, Inc."
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/customers/{customer_id}/updateConfig": {
+      "post": {
+        "description": "Updates the specified customer's config.\n",
+        "operationId": "updateCustomerConfig",
+        "summary": "Update a customer configuration",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/CustomerId"
+          }
+        ],
+        "tags": [
+          "Customers"
+        ],
+        "requestBody": {
+          "description": "The configuration for a specific customer",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomerConfigPayload"
+              },
+              "example": {
+                "salesforce_account_id": "0015500001WO1ZiABL"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/credits/listEntries": {
+      "post": {
+        "description": "Fetches a list of credit ledger entries. Returns lists of ledgers per customer. Ledger entries are returned in reverse chronological order. Ledger entries associated with voided credit grants are not included.",
+        "operationId": "listCreditLedgerEntries",
+        "summary": "List credit ledger entries",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/NextPage"
+          }
+        ],
+        "tags": [
+          "Credit grants"
+        ],
+        "requestBody": {
+          "description": "Optional filters on the ledger entries to return",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreditLedgerEntriesQueryPayload"
+              },
+              "example": {
+                "starting_on": "2021-01-01T00:00:00Z",
+                "ending_before": "2021-02-01T00:00:00Z",
+                "customer_ids": [
+                  "6a37bb88-8538-48c5-b37b-a41c836328bd"
+                ],
+                "credit_type_ids": [
+                  "2714e483-4ff1-48e4-9e25-ac732e8f24f2"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data",
+                    "next_page"
+                  ],
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/CustomerCreditTypeLedger"
+                      }
+                    },
+                    "next_page": {
+                      "type": "string",
+                      "nullable": true
+                    }
+                  }
+                },
+                "example": {
+                  "data": [
+                    {
+                      "customer_id": "6a37bb88-8538-48c5-b37b-a41c836328bd",
+                      "ledgers": [
+                        {
+                          "credit_type": {
+                            "id": "2714e483-4ff1-48e4-9e25-ac732e8f24f2",
+                            "name": "USD (cents)"
+                          },
+                          "starting_balance": {
+                            "including_pending": 400,
+                            "excluding_pending": 400,
+                            "effective_at": "2021-01-01T00:00:00Z"
+                          },
+                          "ending_balance": {
+                            "including_pending": 110,
+                            "excluding_pending": 400,
+                            "effective_at": "2021-02-01T00:00:00Z"
+                          },
+                          "entries": [],
+                          "pending_entries": [
+                            {
+                              "amount": 290,
+                              "reason": "Automated invoice deduction",
+                              "running_balance": 110,
+                              "effective_at": "2021-02-01T00:00:00Z",
+                              "created_by": "Metronome System",
+                              "credit_grant_id": "f06b3d1b-c724-4e0b-99d1-20c0526bf21b",
+                              "invoice_id": "92fb6de8-eb2f-47e5-ae1b-b1e0fb1f388d"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "next_page": null
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/customers/{customer_id}/invoices": {
+      "get": {
+        "description": "List all invoices for a given customer, optionally filtered by status, date range, and/or credit type.",
+        "operationId": "listInvoices",
+        "summary": "List invoices",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/CustomerId"
+          },
+          {
+            "$ref": "#/components/parameters/PageLimit"
+          },
+          {
+            "$ref": "#/components/parameters/NextPage"
+          },
+          {
+            "$ref": "#/components/parameters/InvoiceStatus"
+          },
+          {
+            "in": "query",
+            "name": "credit_type_id",
+            "description": "Only return invoices for the specified credit type",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "starting_on",
+            "description": "RFC 3339 timestamp (inclusive). Invoices will only be returned for billing periods that start at or after this time.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "in": "query",
+            "name": "ending_before",
+            "description": "RFC 3339 timestamp (exclusive). Invoices will only be returned for billing periods that end before this time.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "tags": [
+          "Invoices"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data",
+                    "next_page"
+                  ],
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Invoice"
+                      }
+                    },
+                    "next_page": {
+                      "type": "string",
+                      "nullable": true
+                    }
+                  }
+                },
+                "examples": {
+                  "response1": {
+                    "$ref": "#/components/examples/InvoiceExample"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/customers/{customer_id}/invoices/cached": {
+      "get": {
+        "description": "List all invoices for a given customer, optionally filtered by status, date range, and/or credit type. Responses are cached for up to 5 minutes.",
+        "operationId": "listInvoicesCached",
+        "summary": "List invoices (cached)",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/CustomerId"
+          },
+          {
+            "$ref": "#/components/parameters/PageLimit"
+          },
+          {
+            "$ref": "#/components/parameters/NextPage"
+          },
+          {
+            "$ref": "#/components/parameters/InvoiceStatus"
+          },
+          {
+            "in": "query",
+            "name": "credit_type_id",
+            "description": "Only return invoices for the specified credit type",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "starting_on",
+            "description": "RFC 3339 timestamp (inclusive). Invoices will only be returned for billing periods that start at or after this time.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "in": "query",
+            "name": "ending_before",
+            "description": "RFC 3339 timestamp (exclusive). Invoices will only be returned for billing periods that end before this time.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "tags": [
+          "Invoices"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data",
+                    "next_page"
+                  ],
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Invoice"
+                      }
+                    },
+                    "next_page": {
+                      "type": "string",
+                      "nullable": true
+                    }
+                  }
+                },
+                "examples": {
+                  "response1": {
+                    "$ref": "#/components/examples/InvoiceExample"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/customers/{customer_id}/invoices/{invoice_id}": {
+      "get": {
+        "description": "Fetch a specific invoice for a given customer.",
+        "operationId": "getInvoice",
+        "summary": "Fetch invoice",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/CustomerId"
+          },
+          {
+            "$ref": "#/components/parameters/InvoiceId"
+          }
+        ],
+        "tags": [
+          "Invoices"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Invoice"
+                    }
+                  }
+                },
+                "example": {
+                  "data": {
+                    "id": "6a37bb88-8538-48c5-b37b-a41c836328bd",
+                    "customer_id": "617e39d8-68f4-4592-b8d2-c2bf26a76989",
+                    "start_timestamp": "2021-01-01T00:00:00Z",
+                    "end_timestamp": "2021-02-01T00:00:00Z",
+                    "credit_type": {
+                      "id": "2714e483-4ff1-48e4-9e25-ac732e8f24f2",
+                      "name": "USD (cents)"
+                    },
+                    "plan_name": "test plan",
+                    "plan_id": "9de042a1-b955-43ce-9ab4-e3c2004570d1",
+                    "line_items": [
+                      {
+                        "credit_type": {
+                          "id": "2714e483-4ff1-48e4-9e25-ac732e8f24f2",
+                          "name": "USD (cents)"
+                        },
+                        "sub_line_items": [
+                          {
+                            "name": "CPU hours",
+                            "quantity": 1488,
+                            "subtotal": 14392,
+                            "charge_id": "3f1541ac-00df-40ee-a1a3-ec3373933669",
+                            "tiers": [
+                              {
+                                "starting_at": 0,
+                                "quantity": 1000,
+                                "price": 10,
+                                "subtotal": 10000
+                              },
+                              {
+                                "starting_at": 1001,
+                                "quantity": 488,
+                                "price": 9,
+                                "subtotal": 4392
+                              }
+                            ],
+                            "custom_fields": {
+                              "x_account_id": "KyVnHhSBWl7eY2bl"
+                            }
+                          }
+                        ],
+                        "name": "Cloud database",
+                        "quantity": 1,
+                        "total": 14392,
+                        "product_id": "5c1f40cd-9ff8-4e90-ae53-5f81b0e9d1e8",
+                        "custom_fields": {
+                          "x_account_id": "KyVnHhSBWl7eY2bl"
+                        }
+                      }
+                    ],
+                    "invoice_adjustments": [],
+                    "status": "FINALIZED",
+                    "subtotal": 14392,
+                    "total": 14392
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/customers/{customer_id}/costs": {
+      "get": {
+        "description": "Fetch daily pending costs for the specified customer, broken down by credit type and line items. Note: this is not supported for customers whose plan includes a UNIQUE-type billable metric.",
+        "operationId": "getCosts",
+        "summary": "Get costs",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/CustomerId"
+          },
+          {
+            "$ref": "#/components/parameters/RequiredStartDate"
+          },
+          {
+            "$ref": "#/components/parameters/RequiredEndDate"
+          },
+          {
+            "$ref": "#/components/parameters/PageLimit"
+          },
+          {
+            "$ref": "#/components/parameters/NextPage"
+          }
+        ],
+        "tags": [
+          "Invoices"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data",
+                    "next_page"
+                  ],
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Costs"
+                      }
+                    },
+                    "next_page": {
+                      "type": "string",
+                      "nullable": true
+                    }
+                  }
+                },
+                "example": {
+                  "data": [
+                    {
+                      "start_timestamp": "2021-01-01T00:00:00+00:00",
+                      "end_timestamp": "2021-01-02T00:00:00+00:00",
+                      "credit_types": {
+                        "2714e483-4ff1-48e4-9e25-ac732e8f24f2": {
+                          "name": "USD (cents)",
+                          "cost": 123.45,
+                          "line_item_breakdown": [
+                            {
+                              "name": "CPU hours",
+                              "cost": 123.45
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ],
+                  "next_page": null
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/customers/{customer_id}/billing-config/{billing_provider_type}": {
+      "get": {
+        "description": "Fetch the billing configuration for the given customer.",
+        "operationId": "getBillingConfig",
+        "summary": "Get billing configuration",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/CustomerId"
+          },
+          {
+            "$ref": "#/components/parameters/BillingProviderType"
+          }
+        ],
+        "tags": [
+          "Customers"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "billing_provider_customer_id": {
+                          "type": "string"
+                        },
+                        "stripe_collection_method": {
+                          "$ref": "#/components/schemas/StripeCollectionMethod"
+                        },
+                        "aws_product_code": {
+                          "type": "string"
+                        },
+                        "aws_region": {
+                          "$ref": "#/components/schemas/AwsRegion"
+                        },
+                        "aws_expiration_date": {
+                          "$ref": "#/components/schemas/AwsExpirationDate"
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "data": {
+                    "billing_provider_customer_id": "cus_AJ6y20bjkOOayM",
+                    "stripe_collection_method": "charge_automatically"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      },
+      "post": {
+        "description": "Set the billing configuration for a given customer.",
+        "operationId": "setBillingConfigForCustomer",
+        "summary": "Set billing configuration",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/CustomerId"
+          },
+          {
+            "$ref": "#/components/parameters/BillingProviderType"
+          }
+        ],
+        "requestBody": {
+          "description": "The billing configuration for the customer",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "billing_provider_customer_id"
+                ],
+                "properties": {
+                  "billing_provider_customer_id": {
+                    "type": "string"
+                  },
+                  "stripe_collection_method": {
+                    "$ref": "#/components/schemas/StripeCollectionMethod"
+                  },
+                  "aws_product_code": {
+                    "type": "string"
+                  },
+                  "aws_region": {
+                    "$ref": "#/components/schemas/AwsRegion"
+                  }
+                }
+              },
+              "example": {
+                "billing_provider_customer_id": "cus_AJ6y20bjkOOayM",
+                "stripe_collection_method": "charge_automatically"
+              }
+            }
+          }
+        },
+        "tags": [
+          "Customers"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      },
+      "delete": {
+        "description": "Delete the billing configuration for a given customer.",
+        "operationId": "deleteBillingConfigForCustomer",
+        "summary": "Delete billing configuration",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/CustomerId"
+          },
+          {
+            "$ref": "#/components/parameters/BillingProviderType"
+          }
+        ],
+        "tags": [
+          "Customers"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/dashboards/getEmbeddableUrl": {
+      "post": {
+        "description": "Retrieve an embeddable dashboard url for a customer.  The dashboard can be embedded using an iframe in a website.  This will show information such as usage data and customer invoices.",
+        "operationId": "embeddableDashboard",
+        "summary": "Get embeddable dashboard",
+        "tags": [
+          "Customers"
+        ],
+        "requestBody": {
+          "description": "The details of the dashboard to retrieve",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmbeddableDashboardPayload"
+              },
+              "example": {
+                "customer_id": "4db51251-61de-4bfe-b9ce-495e244f3491",
+                "dashboard": "invoices",
+                "color_overrides": [
+                  {
+                    "name": "Gray_dark",
+                    "value": "#ff0000"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "url": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "data": {
+                    "url": "https://embeddable-dashboards.metronome.com/customers/invoices/v1?..."
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/customFields/addKey": {
+      "post": {
+        "description": "Add a key to the allow list for a given entity.\n",
+        "operationId": "addCustomFieldKey",
+        "summary": "Add custom field key",
+        "tags": [
+          "Custom fields"
+        ],
+        "requestBody": {
+          "description": "Add a key to the allow list for an entity",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "entity",
+                  "key",
+                  "enforce_uniqueness"
+                ],
+                "properties": {
+                  "entity": {
+                    "$ref": "#/components/schemas/ManagedEntity"
+                  },
+                  "key": {
+                    "type": "string"
+                  },
+                  "enforce_uniqueness": {
+                    "type": "boolean"
+                  }
+                }
+              },
+              "example": {
+                "entity": "customer",
+                "key": "x_account_id",
+                "enforce_uniqueness": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/customFields/removeKey": {
+      "post": {
+        "description": "Remove a key from the allow list for a given entity.\n",
+        "operationId": "disableCustomFieldKey",
+        "summary": "Remove a custom field key",
+        "tags": [
+          "Custom fields"
+        ],
+        "requestBody": {
+          "description": "Remove a key from the allow list for an entity",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "entity",
+                  "key"
+                ],
+                "properties": {
+                  "entity": {
+                    "$ref": "#/components/schemas/ManagedEntity"
+                  },
+                  "key": {
+                    "type": "string"
+                  }
+                }
+              },
+              "example": {
+                "entity": "customer",
+                "key": "x_account_id"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/customFields/setValues": {
+      "post": {
+        "description": "Sets one or more custom fields on an instance of a Metronome entity. If a key/value pair passed in this request matches one already set on the entity, its value will be overwritten. Any key/value pairs that exist on the entity that do not match those passed in this request will remain untouched. This endpoint is transactional and will update all key/value pairs or no key/value pairs. Partial updates are not supported.\n",
+        "operationId": "setCustomFields",
+        "summary": "Set custom field values",
+        "tags": [
+          "Custom fields"
+        ],
+        "requestBody": {
+          "description": "The custom field values to set",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "entity",
+                  "entity_id",
+                  "custom_fields"
+                ],
+                "properties": {
+                  "entity": {
+                    "$ref": "#/components/schemas/ManagedEntity"
+                  },
+                  "entity_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "custom_fields": {
+                    "$ref": "#/components/schemas/CustomField"
+                  }
+                }
+              },
+              "example": {
+                "entity": "customer",
+                "entity_id": "99594816-e8a5-4bca-be21-8d1de0f45120",
+                "custom_fields": {
+                  "x_account_id": "KyVnHhSBWl7eY2bl"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/customFields/deleteValues": {
+      "post": {
+        "description": "Deletes one or more custom fields on an instance of a Metronome entity.\n",
+        "operationId": "deleteCustomFields",
+        "summary": "Delete custom fields",
+        "tags": [
+          "Custom fields"
+        ],
+        "requestBody": {
+          "description": "Delete one or more custom fields",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "entity",
+                  "entity_id",
+                  "keys"
+                ],
+                "properties": {
+                  "entity": {
+                    "$ref": "#/components/schemas/ManagedEntity"
+                  },
+                  "entity_id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "keys": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "example": {
+                "entity": "customer",
+                "entity_id": "99594816-e8a5-4bca-be21-8d1de0f45120",
+                "keys": [
+                  "x_account_id"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/customFields/listKeys": {
+      "post": {
+        "description": "List all active custom field keys, optionally filtered by entity type.\n",
+        "operationId": "listCustomFieldKeys",
+        "summary": "List custom field keys",
+        "tags": [
+          "Custom fields"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "entities": {
+                    "type": "array",
+                    "description": "Optional list of entity types to return keys for",
+                    "items": {
+                      "$ref": "#/components/schemas/ManagedEntity"
+                    }
+                  }
+                }
+              },
+              "example": {
+                "entities": [
+                  "customer",
+                  "credit_grant"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data",
+                    "next_page"
+                  ],
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "required": [
+                          "entity",
+                          "key",
+                          "enforce_uniqueness"
+                        ],
+                        "properties": {
+                          "entity": {
+                            "$ref": "#/components/schemas/ManagedEntity"
+                          },
+                          "key": {
+                            "type": "string"
+                          },
+                          "enforce_uniqueness": {
+                            "type": "boolean"
+                          }
+                        }
+                      }
+                    },
+                    "next_page": {
+                      "type": "string",
+                      "nullable": true
+                    }
+                  }
+                },
+                "example": {
+                  "data": [
+                    {
+                      "entity": "customer",
+                      "key": "x_account_id",
+                      "enforce_uniqueness": true
+                    }
+                  ],
+                  "next_page": null
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "parameters": {
+      "BillingProviderType": {
+        "name": "billing_provider_type",
+        "in": "path",
+        "description": "The billing provider (e.g. stripe)",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/schemas/BillingProviderType"
+        },
+        "example": "stripe"
+      },
+      "BillableMetricId": {
+        "name": "billable_metric_id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "example": "13117714-3f05-48e5-a6e9-a66093f13b4d"
+      },
+      "PlanId": {
+        "name": "plan_id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "example": "d7abd0cd-4ae9-4db7-8676-e986a4ebd8dc"
+      },
+      "CustomerPlanId": {
+        "name": "customer_plan_id",
+        "in": "path",
+        "description": "the ID of a customer-plan relationship",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "example": "7aa11640-0703-4600-8eb9-293f535a6b74"
+      },
+      "CustomerId": {
+        "name": "customer_id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "example": "d7abd0cd-4ae9-4db7-8676-e986a4ebd8dc"
+      },
+      "CreditTypeId": {
+        "name": "credit_type_id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "example": "2714e483-4ff1-48e4-9e25-ac732e8f24f2"
+      },
+      "InvoiceId": {
+        "name": "invoice_id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "example": "6a37bb88-8538-48c5-b37b-a41c836328bd"
+      },
+      "NextPage": {
+        "name": "next_page",
+        "in": "query",
+        "description": "Cursor that indicates where the next page of results should start.",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      },
+      "PageLimit": {
+        "name": "limit",
+        "in": "query",
+        "description": "Max number of results that should be returned",
+        "required": false,
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        }
+      },
+      "RequiredStartDate": {
+        "name": "starting_on",
+        "in": "query",
+        "description": "RFC 3339 timestamp (inclusive)",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "RequiredEndDate": {
+        "name": "ending_before",
+        "in": "query",
+        "description": "RFC 3339 timestamp (exclusive)",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "InvoiceStatus": {
+        "name": "status",
+        "in": "query",
+        "description": "Invoice status, e.g. DRAFT, FINALIZED, or VOID",
+        "required": false,
+        "schema": {
+          "type": "string"
+        }
+      }
+    },
+    "responses": {
+      "NotFound": {
+        "description": "The specified resource was not found",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      }
+    },
+    "examples": {
+      "InvoiceExample": {
+        "value": {
+          "data": [
+            {
+              "id": "6a37bb88-8538-48c5-b37b-a41c836328bd",
+              "customer_id": "617e39d8-68f4-4592-b8d2-c2bf26a76989",
+              "start_timestamp": "2021-01-01T00:00:00Z",
+              "end_timestamp": "2021-02-01T00:00:00Z",
+              "credit_type": {
+                "id": "2714e483-4ff1-48e4-9e25-ac732e8f24f2",
+                "name": "USD (cents)"
+              },
+              "plan_name": "test plan",
+              "plan_id": "9de042a1-b955-43ce-9ab4-e3c2004570d1",
+              "line_items": [
+                {
+                  "credit_type": {
+                    "id": "2714e483-4ff1-48e4-9e25-ac732e8f24f2",
+                    "name": "USD (cents)"
+                  },
+                  "sub_line_items": [
+                    {
+                      "name": "CPU hours",
+                      "quantity": 1488,
+                      "subtotal": 14392,
+                      "charge_id": "3f1541ac-00df-40ee-a1a3-ec3373933669",
+                      "tiers": [
+                        {
+                          "starting_at": 0,
+                          "quantity": 1000,
+                          "price": 10,
+                          "subtotal": 10000
+                        },
+                        {
+                          "starting_at": 1001,
+                          "quantity": 488,
+                          "price": 9,
+                          "subtotal": 4392
+                        }
+                      ],
+                      "custom_fields": {
+                        "x_account_id": "KyVnHhSBWl7eY2bl"
+                      }
+                    }
+                  ],
+                  "name": "Cloud database",
+                  "quantity": 1,
+                  "total": 14392,
+                  "product_id": "5c1f40cd-9ff8-4e90-ae53-5f81b0e9d1e8",
+                  "custom_fields": {
+                    "x_account_id": "KyVnHhSBWl7eY2bl"
+                  }
+                }
+              ],
+              "invoice_adjustments": [],
+              "status": "FINALIZED",
+              "subtotal": 14392,
+              "total": 14392
+            }
+          ],
+          "next_page": null
+        }
+      }
+    },
+    "schemas": {
+      "ExperimentalEmbeddableDashboardPayload": {
+        "required": [
+          "customer_id",
+          "dashboard"
+        ],
+        "type": "object",
+        "properties": {
+          "customer_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "dashboard": {
+            "type": "string",
+            "description": "The type of experimental dashboard to retrieve."
+          },
+          "dashboardHostUrl": {
+            "type": "string",
+            "description": "Host override url to the embeddable dashboards host."
+          },
+          "color_overrides": {
+            "type": "array",
+            "description": "Optional list of colors to override",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "The color to override",
+                  "enum": [
+                    "Gray_dark",
+                    "Gray_medium",
+                    "Gray_light",
+                    "Gray_extralight",
+                    "White",
+                    "Primary_medium",
+                    "Primary_light"
+                  ]
+                },
+                "value": {
+                  "type": "string",
+                  "description": "Hex value representation of the color"
+                }
+              }
+            }
+          }
+        }
+      },
+      "EmbeddableDashboardPayload": {
+        "required": [
+          "customer_id",
+          "dashboard"
+        ],
+        "type": "object",
+        "properties": {
+          "customer_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "dashboard": {
+            "type": "string",
+            "enum": [
+              "invoices",
+              "usage"
+            ],
+            "description": "The type of dashboard to retrieve."
+          },
+          "color_overrides": {
+            "type": "array",
+            "description": "Optional list of colors to override",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "The color to override",
+                  "enum": [
+                    "Gray_dark",
+                    "Gray_medium",
+                    "Gray_light",
+                    "Gray_extralight",
+                    "White",
+                    "Primary_medium",
+                    "Primary_light"
+                  ]
+                },
+                "value": {
+                  "type": "string",
+                  "description": "Hex value representation of the color"
+                }
+              }
+            }
+          }
+        }
+      },
+      "CreateCustomerAlertPayload": {
+        "required": [
+          "alert_type",
+          "name",
+          "threshold"
+        ],
+        "type": "object",
+        "properties": {
+          "alert_type": {
+            "type": "string",
+            "enum": [
+              "low_credit_balance_reached",
+              "spend_threshold_reached",
+              "low_remaining_days_in_plan_reached",
+              "low_remaining_credit_percentage_reached",
+              "usage_threshold_reached"
+            ],
+            "description": "Type of the alert"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the alert"
+          },
+          "threshold": {
+            "type": "number",
+            "description": "Threshold value of the alert policy"
+          },
+          "credit_type_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "customer_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "If provided, will create this alert for this specific customer. To create an alert for all customers, do not specify `customer_id` or `plan_id`."
+          },
+          "plan_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "If provided, will create this alert for this specific plan. To create an alert for all customers, do not specify `customer_id` or `plan_id`."
+          },
+          "billable_metric_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "For alerts of type `usage_threshold_reached`, specifies which billable metric to track the usage for."
+          }
+        }
+      },
+      "GetCustomerAlertPayload": {
+        "required": [
+          "customer_id",
+          "alert_id"
+        ],
+        "type": "object",
+        "properties": {
+          "customer_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The Metronome ID of the customer"
+          },
+          "alert_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The Metronome ID of the alert"
+          }
+        }
+      },
+      "ListCustomerAlertsPayload": {
+        "required": [
+          "customer_id"
+        ],
+        "type": "object",
+        "properties": {
+          "customer_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The Metronome ID of the customer"
+          },
+          "alert_statuses": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "enum": [
+                "enabled",
+                "disabled",
+                "archived",
+                "ENABLED",
+                "DISABLED",
+                "ARCHIVED",
+                "Enabled",
+                "Disabled",
+                "Archived"
+              ]
+            },
+            "description": "Optionally filter by alert status. If absent, only enabled alerts will be returned."
+          }
+        }
+      },
+      "CreatePlanSalesforceResponse": {
+        "required": [
+          "metronome_customer_id"
+        ],
+        "type": "object",
+        "properties": {
+          "metronome_customer_id": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "CustomerAlert": {
+        "required": [
+          "customer_status",
+          "alert"
+        ],
+        "type": "object",
+        "properties": {
+          "customer_status": {
+            "type": "string",
+            "enum": [
+              "ok",
+              "in_alarm",
+              "evaluating"
+            ],
+            "nullable": true,
+            "description": "The status of the customer alert. If the alert is archived, null will be returned."
+          },
+          "alert": {
+            "$ref": "#/components/schemas/Alert"
+          }
+        }
+      },
+      "Alert": {
+        "required": [
+          "id",
+          "name",
+          "type",
+          "status",
+          "credit_type",
+          "threshold",
+          "updated_at"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "the Metronome ID of the alert"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the alert"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "low_credit_balance_reached",
+              "spend_threshold_reached",
+              "low_remaining_days_in_plan_reached",
+              "low_remaining_credit_percentage_reached",
+              "usage_threshold_reached"
+            ],
+            "description": "Type of the alert"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "enabled",
+              "archived",
+              "disabled"
+            ],
+            "description": "Status of the alert"
+          },
+          "credit_type": {
+            "$ref": "#/components/schemas/CreditType",
+            "nullable": true
+          },
+          "threshold": {
+            "type": "number",
+            "description": "Threshold value of the alert policy"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp for when the alert was last updated"
+          }
+        }
+      },
+      "BillingProviderType": {
+        "type": "string",
+        "enum": [
+          "aws_marketplace",
+          "stripe"
+        ]
+      },
+      "EndCustomerPlanPayload": {
+        "required": [
+          "ending_before"
+        ],
+        "type": "object",
+        "properties": {
+          "ending_before": {
+            "description": "RFC 3339 timestamp for when the plan ends (exclusive) for this customer. Must be at 0:00 UTC (midnight).",
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "AddPlanToCustomerPayload": {
+        "required": [
+          "plan_id",
+          "starting_on"
+        ],
+        "type": "object",
+        "properties": {
+          "plan_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "starting_on": {
+            "description": "RFC 3339 timestamp for when the plan becomes active for this customer. Must be at 0:00 UTC (midnight).",
+            "type": "string",
+            "format": "date-time"
+          },
+          "ending_before": {
+            "description": "RFC 3339 timestamp for when the plan ends (exclusive) for this customer. Must be at 0:00 UTC (midnight).",
+            "type": "string",
+            "format": "date-time"
+          },
+          "net_payment_terms_days": {
+            "description": "Number of days after issuance of invoice after which the invoice is due (e.g. Net 30).",
+            "type": "number"
+          },
+          "price_adjustments": {
+            "type": "array",
+            "description": "A list of price adjustments can be applied on top of the pricing in the plans. See the [price adjustments documentation](https://docs.metronome.com/pricing/managing-plans/#price-adjustments) for details.",
+            "items": {
+              "type": "object",
+              "required": [
+                "charge_id",
+                "adjustment_type",
+                "start_period"
+              ],
+              "properties": {
+                "charge_id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "adjustment_type": {
+                  "type": "string",
+                  "enum": [
+                    "percentage",
+                    "fixed",
+                    "override",
+                    "quantity"
+                  ]
+                },
+                "value": {
+                  "type": "number",
+                  "description": "The amount of change to a price. Percentage and fixed adjustments can be positive or negative. Percentage-based adjustments should be decimals, e.g. -0.05 for a 5% discount."
+                },
+                "quantity": {
+                  "type": "number",
+                  "description": "the overridden quantity for a fixed charge"
+                },
+                "tier": {
+                  "type": "number",
+                  "description": "Used in pricing tiers.  Indicates at what metric value the price applies."
+                },
+                "start_period": {
+                  "type": "number",
+                  "description": "Used in price ramps.  Indicates how many billing periods pass before the charge applies."
+                }
+              }
+            }
+          }
+        }
+      },
+      "AddPlanToCustomerConfluentPayload": {
+        "required": [
+          "plan_id",
+          "starting_on"
+        ],
+        "type": "object",
+        "properties": {
+          "plan_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "starting_on": {
+            "description": "RFC 3339 timestamp for when the plan becomes active for this customer. Must be at 0:00 UTC (midnight).",
+            "type": "string",
+            "format": "date-time"
+          },
+          "ending_before": {
+            "description": "RFC 3339 timestamp for when the plan ends (exclusive) for this customer. Must be at 0:00 UTC (midnight).",
+            "type": "string",
+            "format": "date-time"
+          },
+          "net_payment_terms_days": {
+            "description": "Number of days after issuance of invoice after which the invoice is due (e.g. Net 30).",
+            "type": "number"
+          },
+          "price_adjustments": {
+            "type": "array",
+            "description": "A list of price adjustments can be applied on top of the pricing in the plans. See the [price adjustments documentation](https://docs.metronome.com/pricing/managing-plans/#price-adjustments) for details.",
+            "items": {
+              "type": "object",
+              "required": [
+                "charge_id",
+                "adjustment_type",
+                "start_period",
+                "charge_type"
+              ],
+              "properties": {
+                "charge_id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "charge_type": {
+                  "$ref": "#/components/schemas/ChargeType"
+                },
+                "adjustment_type": {
+                  "type": "string",
+                  "enum": [
+                    "percentage",
+                    "fixed",
+                    "override",
+                    "quantity"
+                  ]
+                },
+                "value": {
+                  "type": "number",
+                  "description": "The amount of change to a price. Percentage and fixed adjustments can be positive or negative. Percentage-based adjustments should be decimals, e.g. -0.05 for a 5% discount."
+                },
+                "quantity": {
+                  "type": "number",
+                  "description": "the overridden quantity for a fixed charge"
+                },
+                "tier": {
+                  "type": "number",
+                  "description": "Used in pricing tiers.  Indicates at what metric value the price applies."
+                },
+                "start_period": {
+                  "type": "number",
+                  "description": "Used in price ramps.  Indicates how many billing periods pass before the charge applies."
+                }
+              }
+            }
+          }
+        }
+      },
+      "AddPlanToCustomerExperimentalPayload": {
+        "required": [
+          "plan_id",
+          "starting_on"
+        ],
+        "type": "object",
+        "properties": {
+          "plan_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "starting_on": {
+            "description": "RFC 3339 timestamp for when the plan becomes active for this customer. Must be at 0:00 UTC (midnight).",
+            "type": "string",
+            "format": "date-time"
+          },
+          "ending_before": {
+            "description": "RFC 3339 timestamp for when the plan ends (exclusive) for this customer. Must be at 0:00 UTC (midnight).",
+            "type": "string",
+            "format": "date-time"
+          },
+          "net_payment_terms_days": {
+            "description": "Number of days after issuance of invoice after which the invoice is due (e.g. Net 30).",
+            "type": "number"
+          },
+          "price_adjustments": {
+            "type": "array",
+            "description": "A list of price adjustments can be applied on top of the pricing in the plans. See the [price adjustments documentation](https://docs.metronome.com/pricing/managing-plans/#price-adjustments) for details.",
+            "items": {
+              "type": "object",
+              "required": [
+                "charge_id",
+                "adjustment_type"
+              ],
+              "properties": {
+                "charge_id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "adjustment_type": {
+                  "type": "string",
+                  "enum": [
+                    "percentage",
+                    "PERCENTAGE",
+                    "fixed",
+                    "FIXED",
+                    "override",
+                    "OVERRIDE",
+                    "quantity",
+                    "QUANTITY"
+                  ]
+                },
+                "value": {
+                  "type": "number",
+                  "description": "The amount of change to a price. Percentage and fixed adjustments can be positive or negative. Percentage-based adjustments should be decimals, e.g. -0.05 for a 5% discount."
+                },
+                "quantity": {
+                  "type": "number",
+                  "description": "the overridden quantity for a fixed charge"
+                },
+                "metric_minimum": {
+                  "type": "number",
+                  "description": "the start of the tier for usage-based charges"
+                },
+                "starting_billing_period": {
+                  "type": "number",
+                  "description": "the billing period in which this adjustment starts"
+                }
+              }
+            }
+          }
+        }
+      },
+      "AddPlanFromSalesforceExperimentalPayload": {
+        "required": [
+          "plan_id",
+          "starting_on",
+          "version",
+          "salesforce_records",
+          "salesforce_account_id",
+          "customer_name",
+          "deal_type"
+        ],
+        "type": "object",
+        "properties": {
+          "plan_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "starting_on": {
+            "description": "RFC 3339 timestamp for when the plan becomes active for this customer. Must be at 0:00 UTC (midnight).",
+            "type": "string",
+            "format": "date-time"
+          },
+          "ending_before": {
+            "description": "RFC 3339 timestamp for when the plan ends (exclusive) for this customer. Must be at 0:00 UTC (midnight).",
+            "type": "string",
+            "format": "date-time"
+          },
+          "net_payment_terms_days": {
+            "description": "Number of days after issuance of invoice after which the invoice is due (e.g. Net 30).",
+            "type": "number"
+          },
+          "customer_id": {
+            "description": "The identifer of the customer",
+            "type": "string",
+            "format": "uuid"
+          },
+          "customer_name": {
+            "description": "The name of the customer",
+            "type": "string"
+          },
+          "salesforce_account_id": {
+            "description": "Salesforce Account ID",
+            "type": "string"
+          },
+          "version": {
+            "description": "Version of the payload being sent from Salesforce",
+            "type": "number"
+          },
+          "salesforce_records": {
+            "type": "array",
+            "description": "Records being sent from Salesforce to generate the contract",
+            "items": {
+              "type": "object"
+            }
+          },
+          "deal_type": {
+            "type": "string",
+            "description": "Defines the kind of contract being created",
+            "enum": [
+              "new",
+              "renewal",
+              "amendment"
+            ]
+          }
+        }
+      },
+      "SetIngestAliasesPayload": {
+        "required": [
+          "ingest_aliases"
+        ],
+        "type": "object",
+        "properties": {
+          "ingest_aliases": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "maxItems": 100
+          }
+        }
+      },
+      "CreateCustomerPayload": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "ingest_aliases": {
+            "type": "array",
+            "description": "Aliases that can be used to refer to this customer in usage events",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "maxItems": 100
+          },
+          "external_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "description": "(deprecated, use ingest_aliases instead) the first ID (Metronome ID or ingest alias) that can be used in usage events"
+          },
+          "name": {
+            "type": "string"
+          },
+          "billing_config": {
+            "required": [
+              "billing_provider_type",
+              "billing_provider_customer_id"
+            ],
+            "type": "object",
+            "properties": {
+              "billing_provider_type": {
+                "$ref": "#/components/schemas/BillingProviderType"
+              },
+              "billing_provider_customer_id": {
+                "type": "string"
+              },
+              "stripe_collection_method": {
+                "$ref": "#/components/schemas/StripeCollectionMethod"
+              },
+              "aws_product_code": {
+                "type": "string"
+              },
+              "aws_region": {
+                "$ref": "#/components/schemas/AwsRegion"
+              }
+            }
+          }
+        }
+      },
+      "SetCustomerNamePayload": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The new name for the customer"
+          }
+        }
+      },
+      "CustomerConfigPayload": {
+        "type": "object",
+        "properties": {
+          "salesforce_account_id": {
+            "type": "string",
+            "description": "The Salesforce account ID for the customer",
+            "nullable": true
+          }
+        }
+      },
+      "CustomerConfig": {
+        "required": [
+          "salesforce_account_id"
+        ],
+        "type": "object",
+        "properties": {
+          "salesforce_account_id": {
+            "type": "string",
+            "description": "The Salesforce account ID for the customer",
+            "nullable": true
+          }
+        }
+      },
+      "Customer": {
+        "required": [
+          "external_id",
+          "ingest_aliases",
+          "id",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "the Metronome ID of the customer"
+          },
+          "external_id": {
+            "type": "string",
+            "description": "(deprecated, use ingest_aliases instead) the first ID (Metronome or ingest alias) that can be used in usage events"
+          },
+          "ingest_aliases": {
+            "type": "array",
+            "description": "aliases for this customer that can be used instead of the Metronome customer ID in usage events",
+            "items": {
+              "type": "string"
+            }
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "CustomerDetail": {
+        "required": [
+          "external_id",
+          "id",
+          "name",
+          "customer_config",
+          "ingest_aliases",
+          "custom_fields"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "the Metronome ID of the customer"
+          },
+          "external_id": {
+            "type": "string",
+            "description": "(deprecated, use ingest_aliases instead) the first ID (Metronome or ingest alias) that can be used in usage events"
+          },
+          "ingest_aliases": {
+            "type": "array",
+            "description": "aliases for this customer that can be used instead of the Metronome customer ID in usage events",
+            "items": {
+              "type": "string"
+            }
+          },
+          "name": {
+            "type": "string"
+          },
+          "customer_config": {
+            "$ref": "#/components/schemas/CustomerConfig"
+          },
+          "custom_fields": {
+            "$ref": "#/components/schemas/CustomField"
+          }
+        }
+      },
+      "CreateCreditAdjustmentPayload": {
+        "required": [
+          "credit_grant_id",
+          "amount"
+        ],
+        "type": "object",
+        "properties": {
+          "credit_grant_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "amount": {
+            "type": "number"
+          }
+        }
+      },
+      "CreateCreditGrantPayload": {
+        "required": [
+          "customer_id",
+          "grant_amount",
+          "name",
+          "expires_at",
+          "paid_amount",
+          "priority"
+        ],
+        "type": "object",
+        "properties": {
+          "customer_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "the Metronome ID of the customer"
+          },
+          "grant_amount": {
+            "description": "the amount of credits granted",
+            "type": "object",
+            "required": [
+              "amount",
+              "credit_type_id"
+            ],
+            "properties": {
+              "amount": {
+                "type": "number"
+              },
+              "credit_type_id": {
+                "type": "string",
+                "format": "uuid"
+              }
+            }
+          },
+          "paid_amount": {
+            "description": "the amount paid for this credit grant",
+            "type": "object",
+            "required": [
+              "amount",
+              "credit_type_id"
+            ],
+            "properties": {
+              "amount": {
+                "type": "number"
+              },
+              "credit_type_id": {
+                "type": "string",
+                "format": "uuid"
+              }
+            }
+          },
+          "name": {
+            "type": "string",
+            "description": "the name of the credit grant as it will appear on invoices"
+          },
+          "effective_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The credit grant will only apply to billing periods that end at or after this timestamp."
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The credit grant will only apply to billing periods that end before this timestamp."
+          },
+          "invoice_date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The date to issue an invoice for the paid_amount."
+          },
+          "priority": {
+            "type": "number"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "product_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "The product(s) which these credits will be applied to. (If unspecified, the credits will be applied to charges for all products.). The array ordering specified here will be used to determine the order in which credits will be applied to invoice line items"
+          }
+        }
+      },
+      "CreditGrant": {
+        "required": [
+          "id",
+          "name",
+          "customer_id",
+          "effective_at",
+          "expires_at",
+          "priority",
+          "grant_amount",
+          "paid_amount",
+          "balance",
+          "deductions",
+          "pending_deductions",
+          "custom_fields"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "the Metronome ID of the credit grant"
+          },
+          "name": {
+            "type": "string"
+          },
+          "customer_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "the Metronome ID of the customer"
+          },
+          "invoice_id": {
+            "type": "string",
+            "nullable": true,
+            "format": "uuid",
+            "description": "the Metronome ID of the invoice with the purchase charge for this credit grant, if applicable"
+          },
+          "reason": {
+            "type": "string",
+            "nullable": true
+          },
+          "effective_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "priority": {
+            "type": "number"
+          },
+          "grant_amount": {
+            "description": "the amount of credits initially granted",
+            "type": "object",
+            "required": [
+              "amount",
+              "credit_type"
+            ],
+            "properties": {
+              "amount": {
+                "type": "number"
+              },
+              "credit_type": {
+                "description": "the credit type for the amount granted",
+                "$ref": "#/components/schemas/CreditType"
+              }
+            }
+          },
+          "paid_amount": {
+            "description": "the amount paid for this credit grant",
+            "type": "object",
+            "required": [
+              "amount",
+              "credit_type"
+            ],
+            "properties": {
+              "amount": {
+                "type": "number"
+              },
+              "credit_type": {
+                "description": "the credit type for the amount paid",
+                "$ref": "#/components/schemas/CreditType"
+              }
+            }
+          },
+          "balance": {
+            "description": "The effective balance of the grant as of the end of the customer's current billing period. Expiration deductions will be included only if the grant expires before the end of the current billing period.",
+            "type": "object",
+            "required": [
+              "excluding_pending",
+              "including_pending",
+              "effective_at"
+            ],
+            "properties": {
+              "excluding_pending": {
+                "type": "number",
+                "description": "The grant's current balance including all posted deductions. If the grant has expired, this amount will be 0."
+              },
+              "including_pending": {
+                "type": "number",
+                "description": "The grant's current balance including all posted and pending deductions. If the grant expires before the end of the customer's current billing period, this amount will be 0."
+              },
+              "effective_at": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The end_date of the customer's current billing period."
+              }
+            }
+          },
+          "deductions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CreditLedgerEntry"
+            }
+          },
+          "pending_deductions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CreditLedgerEntry"
+            }
+          },
+          "products": {
+            "description": "The products which these credits will be applied to. (If unspecified, the credits will be applied to charges for all products.)",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "id",
+                "name"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "custom_fields": {
+            "$ref": "#/components/schemas/CustomField"
+          }
+        }
+      },
+      "ListCreditGrantPayload": {
+        "type": "object",
+        "properties": {
+          "credit_type_ids": {
+            "description": "An array of credit type IDs. This must not be specified if credit_grant_ids is specified.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "example": "d7abd0cd-4ae9-4db7-8676-e986a4ebd8dc, 0e5b8609-d901-4992-b394-c3c2e3f37b1c"
+          },
+          "customer_ids": {
+            "description": "An array of Metronome customer IDs. This must not be specified if credit_grant_ids is specified.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "example": "d7abd0cd-4ae9-4db7-8676-e986a4ebd8dc, 0e5b8609-d901-4992-b394-c3c2e3f37b1c"
+          },
+          "credit_grant_ids": {
+            "description": "An array of credit grant IDs. If this is specified, neither credit_type_ids nor customer_ids may be specified.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "example": "d7abd0cd-4ae9-4db7-8676-e986a4ebd8dc, 0e5b8609-d901-4992-b394-c3c2e3f37b1c"
+          },
+          "not_expiring_before": {
+            "description": "Only return credit grants that expire at or after this timestamp.",
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-02-01T00:00:00Z"
+          },
+          "effective_before": {
+            "description": "Only return credit grants that are effective before this timestamp (exclusive).",
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-02-01T00:00:00Z"
+          }
+        }
+      },
+      "CreditType": {
+        "required": [
+          "name",
+          "id"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "Event": {
+        "required": [
+          "customer_id",
+          "event_type",
+          "timestamp",
+          "transaction_id"
+        ],
+        "type": "object",
+        "properties": {
+          "transaction_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "customer_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "event_type": {
+            "type": "string",
+            "minLength": 1
+          },
+          "timestamp": {
+            "type": "string",
+            "description": "RFC 3339 formatted"
+          },
+          "properties": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        }
+      },
+      "Error": {
+        "required": [
+          "message"
+        ],
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "CreditBalance": {
+        "type": "object",
+        "required": [
+          "balance",
+          "credit_type"
+        ],
+        "properties": {
+          "credit_type": {
+            "$ref": "#/components/schemas/CreditType"
+          },
+          "balance": {
+            "type": "number",
+            "example": 100
+          },
+          "pending_delta": {
+            "type": "number",
+            "example": -100
+          }
+        }
+      },
+      "CreditLedgerEntry": {
+        "type": "object",
+        "required": [
+          "amount",
+          "reason",
+          "running_balance",
+          "effective_at",
+          "created_by",
+          "credit_grant_id"
+        ],
+        "properties": {
+          "amount": {
+            "type": "number",
+            "description": "an amount representing the change to the customer's credit balance"
+          },
+          "reason": {
+            "type": "string",
+            "example": "Automated invoice deduction"
+          },
+          "running_balance": {
+            "type": "number",
+            "description": "the running balance for this credit type at the time of the ledger entry, including all preceding charges"
+          },
+          "effective_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "created_by": {
+            "type": "string"
+          },
+          "credit_grant_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "the credit grant this entry is related to"
+          },
+          "invoice_id": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "if this entry is a deduction, the Metronome ID of the invoice where the credit deduction was consumed; if this entry is a grant, the Metronome ID of the invoice where the grant's paid_amount was charged"
+          }
+        }
+      },
+      "CreditTypeLedger": {
+        "type": "object",
+        "required": [
+          "credit_type",
+          "starting_balance",
+          "ending_balance",
+          "entries",
+          "pending_entries"
+        ],
+        "properties": {
+          "credit_type": {
+            "$ref": "#/components/schemas/CreditType"
+          },
+          "starting_balance": {
+            "type": "object",
+            "required": [
+              "excluding_pending",
+              "including_pending",
+              "effective_at"
+            ],
+            "properties": {
+              "excluding_pending": {
+                "type": "number",
+                "description": "the starting balance, including all posted grants, deductions, and expirations that happened at or before the effective_at timestamp"
+              },
+              "including_pending": {
+                "type": "number",
+                "description": "the excluding_pending balance plus any pending activity that has not been posted at the time of the query"
+              },
+              "effective_at": {
+                "type": "string",
+                "format": "date-time",
+                "description": "the starting_on request parameter (if supplied) or the first credit grant's effective_at date"
+              }
+            }
+          },
+          "ending_balance": {
+            "description": "the effective balances at the end of the specified time window",
+            "type": "object",
+            "required": [
+              "excluding_pending",
+              "including_pending",
+              "effective_at"
+            ],
+            "properties": {
+              "excluding_pending": {
+                "type": "number",
+                "description": "the ending balance, including the balance of all grants that have not expired before the effective_at date and deductions that happened before the effective_at date"
+              },
+              "including_pending": {
+                "type": "number",
+                "description": "the excluding_pending balance plus any pending invoice deductions and expirations that will happen by the effective_at date"
+              },
+              "effective_at": {
+                "type": "string",
+                "format": "date-time",
+                "description": "the ending_before request parameter (if supplied) or the current billing period's end date"
+              }
+            }
+          },
+          "entries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CreditLedgerEntry"
+            }
+          },
+          "pending_entries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CreditLedgerEntry"
+            }
+          }
+        }
+      },
+      "CustomerCreditTypeLedger": {
+        "type": "object",
+        "required": [
+          "customer_id",
+          "ledgers"
+        ],
+        "properties": {
+          "customer_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "ledgers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CreditTypeLedger"
+            }
+          }
+        }
+      },
+      "CreditLedgerEntriesQueryPayload": {
+        "type": "object",
+        "properties": {
+          "customer_ids": {
+            "type": "array",
+            "description": "A list of Metronome customer IDs to fetch ledger entries for. If absent, ledger entries for all customers will be returned.",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "credit_type_ids": {
+            "type": "array",
+            "description": "A list of Metronome credit type IDs to fetch ledger entries for. If absent, ledger entries for all credit types will be returned.",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "starting_on": {
+            "type": "string",
+            "description": "If supplied, only ledger entries effective at or after this time will be returned.",
+            "format": "date-time"
+          },
+          "ending_before": {
+            "type": "string",
+            "description": "If supplied, ledger entries will only be returned with an effective_at before this time. This timestamp must not be in the future. If no timestamp is supplied, all entries up to the start of the customer's next billing period will be returned.",
+            "format": "date-time"
+          }
+        }
+      },
+      "CustomerPlan": {
+        "required": [
+          "id",
+          "plan_id",
+          "plan_name",
+          "starting_on"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "plan_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "plan_name": {
+            "type": "string"
+          },
+          "starting_on": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ending_before": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "net_payment_terms_days": {
+            "type": "number"
+          },
+          "trial_info": {
+            "type": "object",
+            "required": [
+              "ending_before",
+              "spending_caps"
+            ],
+            "properties": {
+              "ending_before": {
+                "type": "string",
+                "example": "date-time"
+              },
+              "spending_caps": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "amount",
+                    "amount_remaining",
+                    "credit_type"
+                  ],
+                  "properties": {
+                    "credit_type": {
+                      "$ref": "#/components/schemas/CreditType"
+                    },
+                    "amount": {
+                      "type": "number",
+                      "example": 123.45
+                    },
+                    "amount_remaining": {
+                      "type": "number",
+                      "example": 123
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "PriceAdjustment": {
+        "type": "object",
+        "required": [
+          "charge_id",
+          "charge_type",
+          "start_period",
+          "prices"
+        ],
+        "properties": {
+          "charge_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "charge_type": {
+            "$ref": "#/components/schemas/ChargeType"
+          },
+          "start_period": {
+            "type": "number"
+          },
+          "quantity": {
+            "type": "number"
+          },
+          "prices": {
+            "type": "array",
+            "items": {
+              "required": [
+                "adjustment_type"
+              ],
+              "type": "object",
+              "properties": {
+                "adjustment_type": {
+                  "type": "string",
+                  "enum": [
+                    "fixed",
+                    "quantity",
+                    "percentage",
+                    "override"
+                  ],
+                  "description": "Determines how the value will be applied."
+                },
+                "value": {
+                  "type": "number"
+                },
+                "tier": {
+                  "type": "number",
+                  "description": "Used in pricing tiers.  Indicates at what metric value the price applies."
+                }
+              }
+            }
+          }
+        }
+      },
+      "CustomerPlanExperimental": {
+        "required": [
+          "id",
+          "plan_id",
+          "starting_on"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "plan_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "starting_on": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ending_before": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "net_payment_terms_days": {
+            "type": "number"
+          },
+          "trial_info": {
+            "type": "object",
+            "required": [
+              "ending_before",
+              "spending_caps"
+            ],
+            "properties": {
+              "ending_before": {
+                "type": "string",
+                "example": "date-time"
+              },
+              "spending_caps": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "amount",
+                    "amount_remaining",
+                    "credit_type"
+                  ],
+                  "properties": {
+                    "credit_type": {
+                      "$ref": "#/components/schemas/CreditType"
+                    },
+                    "amount": {
+                      "type": "number",
+                      "example": 123.45
+                    },
+                    "amount_remaining": {
+                      "type": "number",
+                      "example": 123
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "price_adjustments": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "charge_id",
+                "adjustment_type",
+                "starting_billing_period",
+                "value"
+              ],
+              "properties": {
+                "charge_id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "adjustment_type": {
+                  "type": "string",
+                  "enum": [
+                    "percentage",
+                    "fixed",
+                    "override",
+                    "quantity"
+                  ]
+                },
+                "starting_billing_period": {
+                  "type": "number",
+                  "description": "the billing period in which this adjustment starts",
+                  "example": 0
+                },
+                "value": {
+                  "type": "number",
+                  "description": "the amount of change to a price",
+                  "example": 123.45
+                },
+                "tier": {
+                  "type": "number",
+                  "description": "the start of the tier for usage-based charges",
+                  "example": 1000
+                },
+                "quantity": {
+                  "type": "number",
+                  "description": "the overridden quantity for a fixed charge",
+                  "example": 123.45
+                }
+              }
+            }
+          }
+        }
+      },
+      "Id": {
+        "required": [
+          "id"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "Plan": {
+        "required": [
+          "id",
+          "name",
+          "description"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "PlanDetail": {
+        "required": [
+          "id",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "minimums": {
+            "type": "array",
+            "items": {
+              "required": [
+                "name",
+                "value",
+                "start_period",
+                "credit_type"
+              ],
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "number"
+                },
+                "start_period": {
+                  "type": "number",
+                  "description": "Used in price ramps.  Indicates how many billing periods pass before the charge applies."
+                },
+                "credit_type": {
+                  "$ref": "#/components/schemas/CreditType"
+                }
+              }
+            }
+          },
+          "credit_grants": {
+            "type": "array",
+            "items": {
+              "required": [
+                "name",
+                "amount_granted",
+                "amount_paid",
+                "priority",
+                "effective_duration",
+                "send_invoice",
+                "amount_granted_credit_type",
+                "amount_paid_credit_type"
+              ],
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "amount_granted": {
+                  "type": "number"
+                },
+                "amount_paid": {
+                  "type": "number"
+                },
+                "effective_duration": {
+                  "type": "number"
+                },
+                "priority": {
+                  "type": "string"
+                },
+                "send_invoice": {
+                  "type": "boolean"
+                },
+                "reason": {
+                  "type": "string"
+                },
+                "recurrence_duration": {
+                  "type": "number"
+                },
+                "recurrence_interval": {
+                  "type": "number"
+                },
+                "amount_paid_credit_type": {
+                  "$ref": "#/components/schemas/CreditType"
+                },
+                "amount_granted_credit_type": {
+                  "$ref": "#/components/schemas/CreditType"
+                }
+              }
+            }
+          }
+        }
+      },
+      "PlanCharge": {
+        "required": [
+          "id",
+          "name",
+          "product_name",
+          "prices",
+          "charge_type",
+          "credit_type"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "charge_type": {
+            "$ref": "#/components/schemas/ChargeType"
+          },
+          "product_name": {
+            "type": "string"
+          },
+          "quantity": {
+            "type": "number"
+          },
+          "start_period": {
+            "type": "number",
+            "description": "Used in price ramps.  Indicates how many billing periods pass before the charge applies."
+          },
+          "credit_type": {
+            "$ref": "#/components/schemas/CreditType"
+          },
+          "unit_conversion": {
+            "required": [
+              "division_factor"
+            ],
+            "type": "object",
+            "description": "Specifies how quantities for usage based charges will be converted.",
+            "properties": {
+              "division_factor": {
+                "type": "number",
+                "description": "The conversion factor"
+              },
+              "rounding_behavior": {
+                "type": "string",
+                "enum": [
+                  "floor",
+                  "ceiling"
+                ],
+                "description": "Whether usage should be rounded down or up to the nearest whole number. If null, quantity will be rounded to 20 decimal places."
+              }
+            }
+          },
+          "prices": {
+            "type": "array",
+            "items": {
+              "required": [
+                "value",
+                "tier"
+              ],
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "number"
+                },
+                "tier": {
+                  "type": "number",
+                  "description": "Used in pricing tiers.  Indicates at what metric value the price applies."
+                },
+                "quantity": {
+                  "type": "number"
+                },
+                "collection_schedule": {
+                  "type": "string"
+                },
+                "collection_interval": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        }
+      },
+      "BillableMetric": {
+        "required": [
+          "name",
+          "id"
+        ],
+        "type": "object",
+        "properties": {
+          "group_by": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "A list of keys that can be used to additionally segment the values of the billable metric when making usage queries"
+            }
+          },
+          "name": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "UsageQueryPayload": {
+        "required": [
+          "window_size"
+        ],
+        "type": "object",
+        "properties": {
+          "window_size": {
+            "type": "string",
+            "description": "A window_size of \"day\" or \"hour\" will return the usage for the specified period segmented into daily or hourly aggregates. A window_size of \"none\" will return a single usage aggregate for the entirety of the specified period.",
+            "enum": [
+              "hour",
+              "day",
+              "none",
+              "HOUR",
+              "DAY",
+              "NONE",
+              "Hour",
+              "Day",
+              "None"
+            ]
+          },
+          "starting_on": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ending_before": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "group_by": {
+            "type": "object",
+            "required": [
+              "key",
+              "values"
+            ],
+            "properties": {
+              "key": {
+                "type": "string",
+                "description": "The name of the group_by key to use"
+              },
+              "values": {
+                "type": "array",
+                "description": "Values of the group_by key to return in the query",
+                "minItems": 1,
+                "maxItems": 200,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          },
+          "current_period": {
+            "type": "boolean",
+            "description": "If true, will return the usage for the current billing period. Will return an error if the customer is currently uncontracted or starting_on and ending_before are specified when this is true."
+          }
+        }
+      },
+      "PagedUsageQueryPayload": {
+        "required": [
+          "billable_metric_id",
+          "customer_id",
+          "window_size"
+        ],
+        "type": "object",
+        "properties": {
+          "customer_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "billable_metric_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "window_size": {
+            "type": "string",
+            "description": "A window_size of \"day\" or \"hour\" will return the usage for the specified period segmented into daily or hourly aggregates. A window_size of \"none\" will return a single usage aggregate for the entirety of the specified period.",
+            "enum": [
+              "hour",
+              "day",
+              "none",
+              "HOUR",
+              "DAY",
+              "NONE",
+              "Hour",
+              "Day",
+              "None"
+            ]
+          },
+          "starting_on": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ending_before": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "group_by": {
+            "type": "object",
+            "required": [
+              "key"
+            ],
+            "properties": {
+              "key": {
+                "type": "string",
+                "description": "The name of the group_by key to use"
+              },
+              "values": {
+                "type": "array",
+                "description": "Values of the group_by key to return in the query. Omit this if you'd like all values for the key returned.",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          },
+          "current_period": {
+            "type": "boolean",
+            "description": "If true, will return the usage for the current billing period. Will return an error if the customer is currently uncontracted or starting_on and ending_before are specified when this is true."
+          }
+        }
+      },
+      "GroupedUsageQueryPayload": {
+        "required": [
+          "billable_metric_id",
+          "customer_id",
+          "window_size"
+        ],
+        "type": "object",
+        "properties": {
+          "customer_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "billable_metric_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "window_size": {
+            "type": "string",
+            "description": "A window_size of \"day\" or \"hour\" will return the usage for the specified period segmented into daily or hourly aggregates. A window_size of \"none\" will return a single usage aggregate for the entirety of the specified period.",
+            "enum": [
+              "day",
+              "none"
+            ]
+          },
+          "starting_on": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ending_before": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "groupings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "key"
+              ],
+              "properties": {
+                "key": {
+                  "type": "string",
+                  "description": "The name of the group_by key to use"
+                },
+                "values": {
+                  "type": "array",
+                  "description": "Values of the group_by key to return in the query. Omit this if you'd like all values for the key returned.",
+                  "minItems": 1,
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
+              }
+            }
+          },
+          "current_period": {
+            "type": "boolean",
+            "description": "If true, will return the usage for the current billing period. Will return an error if the customer is currently uncontracted or starting_on and ending_before are specified when this is true."
+          }
+        }
+      },
+      "UsageBatchQueryPayload": {
+        "required": [
+          "window_size",
+          "starting_on",
+          "ending_before"
+        ],
+        "type": "object",
+        "properties": {
+          "customer_ids": {
+            "type": "array",
+            "description": "A list of Metronome customer IDs to fetch usage for. If absent, usage for all customers will be returned.",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "billable_metrics": {
+            "type": "array",
+            "description": "A list of billable metrics to fetch usage for. If absent, all billable metrics will be returned.",
+            "items": {
+              "type": "object",
+              "required": [
+                "id"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "group_by": {
+                  "type": "object",
+                  "required": [
+                    "key"
+                  ],
+                  "properties": {
+                    "key": {
+                      "type": "string",
+                      "description": "The name of the group_by key to use"
+                    },
+                    "values": {
+                      "type": "array",
+                      "description": "Values of the group_by key to return in the query. If this field is omitted, all available values will be returned, up to a maximum of 200.",
+                      "minItems": 1,
+                      "maxItems": 200,
+                      "items": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "window_size": {
+            "type": "string",
+            "description": "A window_size of \"day\" or \"hour\" will return the usage for the specified period segmented into daily or hourly aggregates. A window_size of \"none\" will return a single usage aggregate for the entirety of the specified period.",
+            "enum": [
+              "hour",
+              "day",
+              "none",
+              "HOUR",
+              "DAY",
+              "NONE",
+              "Hour",
+              "Day",
+              "None"
+            ]
+          },
+          "starting_on": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ending_before": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "UsageAggregate": {
+        "required": [
+          "start_timestamp",
+          "end_timestamp",
+          "value"
+        ],
+        "type": "object",
+        "properties": {
+          "start_timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "end_timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "value": {
+            "type": "number",
+            "nullable": true
+          },
+          "groups": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "number",
+              "nullable": true
+            },
+            "description": "Values will be either a number or null. Null indicates that there were no matches for the group_by value."
+          }
+        }
+      },
+      "PagedUsageAggregate": {
+        "required": [
+          "starting_on",
+          "ending_before",
+          "group_key",
+          "group_value",
+          "value"
+        ],
+        "type": "object",
+        "properties": {
+          "starting_on": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ending_before": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "group_key": {
+            "type": "string",
+            "nullable": true
+          },
+          "group_value": {
+            "type": "string",
+            "nullable": true
+          },
+          "value": {
+            "type": "number",
+            "nullable": true
+          }
+        }
+      },
+      "GroupedUsageAggregate": {
+        "required": [
+          "starting_on",
+          "ending_before",
+          "value"
+        ],
+        "type": "object",
+        "properties": {
+          "starting_on": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ending_before": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "groupings": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "group_key",
+                "group_value"
+              ],
+              "properties": {
+                "group_key": {
+                  "type": "string"
+                },
+                "group_value": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "value": {
+            "type": "number",
+            "nullable": true
+          }
+        }
+      },
+      "UsageBatchAggregate": {
+        "required": [
+          "customer_id",
+          "billable_metric_id",
+          "billable_metric_name",
+          "start_timestamp",
+          "end_timestamp",
+          "value"
+        ],
+        "type": "object",
+        "properties": {
+          "customer_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "billable_metric_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "billable_metric_name": {
+            "type": "string"
+          },
+          "start_timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "end_timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "value": {
+            "type": "number",
+            "nullable": true
+          },
+          "groups": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "number",
+              "nullable": true
+            },
+            "description": "Values will be either a number or null. Null indicates that there were no matches for the group_by value."
+          }
+        }
+      },
+      "LineItemBreakdown": {
+        "type": "object",
+        "required": [
+          "name",
+          "cost"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "cost": {
+            "type": "number"
+          },
+          "group_key": {
+            "type": "string"
+          },
+          "group_value": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "CostsPerCreditType": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "cost": {
+              "type": "number"
+            },
+            "line_item_breakdown": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/LineItemBreakdown"
+              }
+            }
+          }
+        }
+      },
+      "Costs": {
+        "required": [
+          "start_timestamp",
+          "end_timestamp",
+          "credit_types"
+        ],
+        "type": "object",
+        "properties": {
+          "start_timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "end_timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "credit_types": {
+            "type": "object",
+            "$ref": "#/components/schemas/CostsPerCreditType"
+          }
+        }
+      },
+      "InvoiceStatus": {
+        "type": "string",
+        "example": "DRAFT, VOID, or FINALIZED"
+      },
+      "Invoice": {
+        "required": [
+          "id",
+          "customer_id",
+          "credit_type",
+          "invoice_adjustments",
+          "line_items",
+          "start_timestamp",
+          "end_timestamp",
+          "status",
+          "subtotal",
+          "total"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "customer_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "credit_type": {
+            "$ref": "#/components/schemas/CreditType"
+          },
+          "invoice_adjustments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InvoiceAdjustment"
+            }
+          },
+          "line_items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InvoiceLineItem"
+            }
+          },
+          "start_timestamp": {
+            "description": "Beginning of the usage period this invoice covers (UTC)",
+            "type": "string",
+            "format": "date-time"
+          },
+          "end_timestamp": {
+            "description": "End of the usage period this invoice covers (UTC)",
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "$ref": "#/components/schemas/InvoiceStatus"
+          },
+          "subtotal": {
+            "type": "number"
+          },
+          "total": {
+            "type": "number"
+          },
+          "external_invoice": {
+            "$ref": "#/components/schemas/ExternalInvoice",
+            "nullable": true
+          },
+          "plan_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "plan_name": {
+            "type": "string"
+          }
+        }
+      },
+      "ExternalInvoice": {
+        "required": [
+          "billing_provider_type",
+          "invoice_id",
+          "issued_at_timestamp"
+        ],
+        "type": "object",
+        "properties": {
+          "billing_provider_type": {
+            "$ref": "#/components/schemas/BillingProviderType"
+          },
+          "invoice_id": {
+            "type": "string"
+          },
+          "issued_at_timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "external_status": {
+            "type": "string",
+            "enum": [
+              "DRAFT",
+              "FINALIZED",
+              "PAID",
+              "UNCOLLECTIBLE",
+              "VOID",
+              "DELETED",
+              "PAYMENT_FAILED"
+            ]
+          }
+        }
+      },
+      "InvoiceLineItem": {
+        "required": [
+          "name",
+          "quantity",
+          "total",
+          "credit_type",
+          "sub_line_items",
+          "custom_fields"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "group_key": {
+            "type": "string"
+          },
+          "group_value": {
+            "type": "string"
+          },
+          "quantity": {
+            "type": "number"
+          },
+          "total": {
+            "type": "number"
+          },
+          "product_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "credit_type": {
+            "$ref": "#/components/schemas/CreditType"
+          },
+          "sub_line_items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InvoiceSubLineItem"
+            }
+          },
+          "custom_fields": {
+            "$ref": "#/components/schemas/CustomField"
+          }
+        }
+      },
+      "InvoiceSubLineItem": {
+        "required": [
+          "name",
+          "quantity",
+          "subtotal",
+          "custom_fields"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "price": {
+            "type": "number",
+            "description": "the unit price for this charge, present only if the charge is not tiered and the quantity is nonzero"
+          },
+          "quantity": {
+            "type": "number"
+          },
+          "subtotal": {
+            "type": "number"
+          },
+          "charge_id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "tiers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InvoiceTier"
+            }
+          },
+          "custom_fields": {
+            "$ref": "#/components/schemas/CustomField"
+          }
+        }
+      },
+      "InvoiceTier": {
+        "required": [
+          "starting_at",
+          "quantity",
+          "price",
+          "subtotal"
+        ],
+        "type": "object",
+        "properties": {
+          "starting_at": {
+            "type": "number",
+            "description": "at what metric amount this tier begins"
+          },
+          "quantity": {
+            "type": "number"
+          },
+          "price": {
+            "type": "number"
+          },
+          "subtotal": {
+            "type": "number"
+          }
+        }
+      },
+      "InvoiceAdjustment": {
+        "required": [
+          "name",
+          "total",
+          "credit_type"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Monthly minimum ($1,000)"
+          },
+          "total": {
+            "type": "number"
+          },
+          "credit_type": {
+            "$ref": "#/components/schemas/CreditType"
+          }
+        }
+      },
+      "StripeCollectionMethod": {
+        "type": "string",
+        "enum": [
+          "charge_automatically",
+          "send_invoice"
+        ]
+      },
+      "AwsExpirationDate": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Contract expiration date for the customer. The expected format is RFC 3339 and can be retrieved from AWS's GetEntitlements API. (See https://docs.aws.amazon.com/marketplaceentitlement/latest/APIReference/API_GetEntitlements.html.)"
+      },
+      "AwsRegion": {
+        "type": "string",
+        "enum": [
+          "af-south-1",
+          "ap-east-1",
+          "ap-northeast-1",
+          "ap-northeast-2",
+          "ap-northeast-3",
+          "ap-south-1",
+          "ap-southeast-1",
+          "ap-southeast-2",
+          "ca-central-1",
+          "cn-north-1",
+          "cn-northwest-1",
+          "eu-central-1",
+          "eu-north-1",
+          "eu-south-1",
+          "eu-west-1",
+          "eu-west-2",
+          "eu-west-3",
+          "me-south-1",
+          "sa-east-1",
+          "us-east-1",
+          "us-east-2",
+          "us-gov-east-1",
+          "us-gov-west-1",
+          "us-west-1",
+          "us-west-2"
+        ]
+      },
+      "ChargeType": {
+        "type": "string",
+        "enum": [
+          "usage",
+          "fixed",
+          "composite",
+          "minimum"
+        ]
+      },
+      "IntegrationCloudwatchLogPayload": {
+        "required": [
+          "service_name",
+          "metric_name",
+          "dimensions"
+        ],
+        "type": "object",
+        "properties": {
+          "service_name": {
+            "type": "string"
+          },
+          "metric_name": {
+            "type": "string"
+          },
+          "dimensions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "name",
+                "value"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "ManagedEntity": {
+        "type": "string",
+        "enum": [
+          "charge",
+          "credit_grant",
+          "customer",
+          "product"
+        ]
+      },
+      "CustomField": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "string"
+        }
+      },
+      "CustomFieldMapping": {
+        "type": "object",
+        "required": [
+          "entity",
+          "key",
+          "vendor",
+          "vendor_entity",
+          "vendor_field"
+        ],
+        "properties": {
+          "entity": {
+            "$ref": "#/components/schemas/ManagedEntity"
+          },
+          "key": {
+            "type": "string"
+          },
+          "vendor": {
+            "type": "string"
+          },
+          "vendor_entity": {
+            "type": "string"
+          },
+          "vendor_field": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Customers",
+      "description": "These endpoints allow you to manage customers and their billing configuration."
+    },
+    {
+      "name": "Usage",
+      "description": "Metronome records ingested events and aggregates their usage into billable metrics. These endpoints allow you to retrieve usage for customers."
+    },
+    {
+      "name": "Plans",
+      "description": "Plans determine pricing for your customers."
+    },
+    {
+      "name": "Invoices",
+      "description": "These endpoints allow you to retrieve invoices and cost breakdowns for customers."
+    },
+    {
+      "name": "Credit grants",
+      "description": "Credit grants are a way of adding credit balance to customers. They also allow you to do revenue recognition.\n"
+    },
+    {
+      "name": "Alerts",
+      "description": "These endpoints allow you to retrieve customers' alert statuses and manage your alerts."
+    },
+    {
+      "name": "Custom fields",
+      "description": "These endpoints allow you to update and retrieve custom field data."
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ]
+}

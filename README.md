@@ -71,8 +71,8 @@ func main() {
 	}
 
 	createCustomerBody := metronome.CreateCustomerJSONRequestBody{
-		IngestAliases: &[]string{"customer_alias"},
-		Name:          "customer_id",
+		IngestAliases: &[]string{"my_customer_alias"},
+		Name:          "my_customer_id",
 	}
 
 	resp, err := client.CreateCustomer(context.TODO(), createCustomerBody)
@@ -89,7 +89,8 @@ func main() {
 		panic(err)
 	}
 
-	// Sample output: request succeeded: {customer_alias b2aa3b73-5de7-44f6-bcbb-5b06dd314214 [customer_alias] customer_id}
+	// Sample output:
+	// request succeeded: {my_customer_alias 8d433a54-f281-499c-a4fa-6ec84f3d6157 [my_customer_alias] my_customer_id}
 	fmt.Printf("request succeeded: %v", parsed.JSON200.Data)
 }
 

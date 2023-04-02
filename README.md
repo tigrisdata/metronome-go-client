@@ -30,7 +30,7 @@ Instead of adding authorization header to every request when using this go clien
 simply register a callback as:
 
 ```golang
-authProvider, err := securityprovider.NewSecurityProviderBearerToken("REPLACE_ME")
+authProvider, err := securityprovider.NewSecurityProviderBearerToken("MY_TOKEN")
 if err != nil {
 	panic(err)
 }

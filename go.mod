@@ -1,4 +1,4 @@
-module adilansari/metronome-go-client
+module github.com/adilansari/metronome-go-client
 
 go 1.20
 

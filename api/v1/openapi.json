@@ -463,7 +463,10 @@
                           "value": 50,
                           "tier": 0
                         }
-                      ]
+                      ],
+                      "custom_fields": {
+                        "x_account_id": "KyVnHhSBWl7eY2bl"
+                      }
                     }
                   ],
                   "next_page": "31646362333134302d363735362d346661372d396436362d383"
@@ -1228,6 +1231,67 @@
         }
       }
     },
+    "/customers/archive": {
+      "post": {
+        "description": "Archive a customer",
+        "operationId": "archiveCustomer",
+        "summary": "Archive an existing customer",
+        "tags": [
+          "Customers"
+        ],
+        "requestBody": {
+          "description": "The ID of the customer to archive",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Id"
+              },
+              "example": {
+                "id": "8deed800-1b7a-495d-a207-6c52bac54dc9"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data"
+                  ],
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Id"
+                    }
+                  }
+                },
+                "example": {
+                  "data": {
+                    "id": "8deed800-1b7a-495d-a207-6c52bac54dc9"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
     "/customers/{customer_id}": {
       "get": {
         "description": "Get a customer by Metronome ID.",
@@ -1385,6 +1449,15 @@
               "items": {
                 "type": "string"
               }
+            }
+          },
+          {
+            "in": "query",
+            "name": "only_archived",
+            "description": "Filter the customer list by only archived customers.",
+            "required": false,
+            "schema": {
+              "type": "boolean"
             }
           }
         ],
@@ -2836,6 +2909,27 @@
             "type": "string",
             "description": "Host override url to the embeddable dashboards host."
           },
+          "dashboard_options": {
+            "type": "array",
+            "description": "Optional dashboard specific options",
+            "items": {
+              "type": "object",
+              "required": [
+                "key",
+                "value"
+              ],
+              "properties": {
+                "key": {
+                  "type": "string",
+                  "description": "The option key name"
+                },
+                "value": {
+                  "type": "string",
+                  "description": "The option value"
+                }
+              }
+            }
+          },
           "color_overrides": {
             "type": "array",
             "description": "Optional list of colors to override",
@@ -2882,6 +2976,27 @@
               "usage"
             ],
             "description": "The type of dashboard to retrieve."
+          },
+          "dashboard_options": {
+            "type": "array",
+            "description": "Optional dashboard specific options",
+            "items": {
+              "type": "object",
+              "required": [
+                "key",
+                "value"
+              ],
+              "properties": {
+                "key": {
+                  "type": "string",
+                  "description": "The option key name"
+                },
+                "value": {
+                  "type": "string",
+                  "description": "The option value"
+                }
+              }
+            }
           },
           "color_overrides": {
             "type": "array",
@@ -3414,7 +3529,7 @@
               "minLength": 1,
               "maxLength": 128
             },
-            "maxItems": 100
+            "maxItems": 300
           }
         }
       },
@@ -3432,7 +3547,7 @@
               "minLength": 1,
               "maxLength": 128
             },
-            "maxItems": 100
+            "maxItems": 300
           },
           "external_id": {
             "type": "string",
@@ -4479,7 +4594,8 @@
           "product_name",
           "prices",
           "charge_type",
-          "credit_type"
+          "credit_type",
+          "custom_fields"
         ],
         "type": "object",
         "properties": {
@@ -4554,6 +4670,9 @@
                 }
               }
             }
+          },
+          "custom_fields": {
+            "$ref": "#/components/schemas/CustomField"
           }
         }
       },
@@ -5129,6 +5248,18 @@
           }
         }
       },
+      "ExternalInvoiceStatus": {
+        "type": "string",
+        "enum": [
+          "DRAFT",
+          "FINALIZED",
+          "PAID",
+          "UNCOLLECTIBLE",
+          "VOID",
+          "DELETED",
+          "PAYMENT_FAILED"
+        ]
+      },
       "ExternalInvoice": {
         "required": [
           "billing_provider_type",
@@ -5148,16 +5279,7 @@
             "format": "date-time"
           },
           "external_status": {
-            "type": "string",
-            "enum": [
-              "DRAFT",
-              "FINALIZED",
-              "PAID",
-              "UNCOLLECTIBLE",
-              "VOID",
-              "DELETED",
-              "PAYMENT_FAILED"
-            ]
+            "$ref": "#/components/schemas/ExternalInvoiceStatus"
           }
         }
       },
@@ -5286,6 +5408,36 @@
           }
         }
       },
+      "BillingProviderInvoice": {
+        "required": [
+          "invoice_id",
+          "billing_provider",
+          "billing_provider_invoice_id",
+          "issued_at"
+        ],
+        "type": "object",
+        "properties": {
+          "invoice_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The invoice id in Metronome"
+          },
+          "billing_provider": {
+            "$ref": "#/components/schemas/BillingProviderType"
+          },
+          "billing_provider_invoice_id": {
+            "type": "string",
+            "description": "The invoice id in the billing provider's system"
+          },
+          "external_status": {
+            "$ref": "#/components/schemas/ExternalInvoiceStatus"
+          },
+          "issued_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
       "StripeCollectionMethod": {
         "type": "string",
         "enum": [
@@ -5380,6 +5532,13 @@
           "product"
         ]
       },
+      "ManagedVendor": {
+        "type": "string",
+        "enum": [
+          "chargebee",
+          "netsuite"
+        ]
+      },
       "CustomField": {
         "type": "object",
         "additionalProperties": {
@@ -5403,12 +5562,62 @@
             "type": "string"
           },
           "vendor": {
-            "type": "string"
+            "$ref": "#/components/schemas/ManagedVendor"
           },
           "vendor_entity": {
             "type": "string"
           },
           "vendor_field": {
+            "type": "string"
+          }
+        }
+      },
+      "AuditLog": {
+        "type": "object",
+        "required": [
+          "id",
+          "timestamp"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "actor": {
+            "$ref": "#/components/schemas/Actor"
+          },
+          "resource_type": {
+            "type": "string"
+          },
+          "resource_id": {
+            "type": "string"
+          },
+          "action": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "success",
+              "failure",
+              "pending"
+            ]
+          }
+        }
+      },
+      "Actor": {
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "email": {
             "type": "string"
           }
         }

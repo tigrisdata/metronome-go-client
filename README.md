@@ -51,8 +51,9 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/adilansari/metronome-go-client"
 	"github.com/deepmap/oapi-codegen/pkg/securityprovider"
+
+	"github.com/adilansari/metronome-go-client"
 )
 
 func main() {
@@ -70,30 +71,33 @@ func main() {
 		panic(err)
 	}
 
+	// JSON request for CreateCustomer
 	createCustomerBody := metronome.CreateCustomerJSONRequestBody{
 		IngestAliases: &[]string{"my_customer_alias"},
 		Name:          "my_customer_id",
 	}
 
+	// HTTP POST call to "/customers" endpoint
 	resp, err := client.CreateCustomer(context.TODO(), createCustomerBody)
 	if err != nil {
 		panic(err)
 	}
 
+	// Checking if request succeeded
 	if resp.StatusCode != http.StatusOK {
 		panic(fmt.Errorf("metronome request failed: %s", resp.Status))
 	}
 
+	// Using built-in parsing to convert response to a native Go struct
 	parsed, err := metronome.ParseCreateCustomerResponse(resp)
 	if err != nil {
 		panic(err)
 	}
 
 	// Sample output:
-	// request succeeded: {my_customer_alias 8d433a54-f281-499c-a4fa-6ec84f3d6157 [my_customer_alias] my_customer_id}
-	fmt.Printf("request succeeded: %v", parsed.JSON200.Data)
+	// request succeeded: {ExternalId:my_customer_alias Id:7d8e8341-f271-4738-8a7f-cf7d6c2418f3 IngestAliases:[my_customer_alias] Name:my_customer_id}
+	fmt.Printf("request succeeded: %+v", parsed.JSON200.Data)
 }
-
 ```
 
 ## Requesting updates

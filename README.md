@@ -21,7 +21,7 @@ go get github.com/adilansari/metronome-go-client@latest
 
 ## Usage
 
-##### Authentication
+### Authentication
 
 Metronome requires all HTTP requests to [include a authorization header](https://docs.metronome.com/using-the-api/authorization/)
 for authentication:
@@ -44,7 +44,7 @@ if err != nil {
 client, err := metronome.NewClient("https://api.metronome.com/v1", metronome.WithRequestEditorFn(authProvider.Intercept))
 ```
 
-##### Create customer example
+### Create customer example
 
 Following is a complete example you can try in your project. Replace the `REPLACE_ME` with your
 own token generated from Metronome account.

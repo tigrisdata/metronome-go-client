@@ -1,3 +1,9 @@
+[![Go Reference](https://pkg.go.dev/badge/github.com/adilansari/metronome-go-client/cobra.svg)](https://pkg.go.dev/github.com/adilansari/metronome-go-client)
+[![rcard](https://goreportcard.com/badge/github.com/adilansari/metronome-go-client)](https://goreportcard.com/report/github.com/adilansari/metronome-go-client)
+[![License](http://img.shields.io/badge/license-mit-blue.svg?style=flat-square)](https://raw.githubusercontent.com/adilansari/metronome-go-client/main/LICENSE)
+
+[//]: # ([![Sourcegraph]&#40;https://sourcegraph.com/github.com/adilansari/metronome-go-client/-/badge.svg&#41;]&#40;https://sourcegraph.com/github.com/adilansari/metronome-go-client?badge&#41;)
+
 # [Metronome](https://docs.metronome.com/api/) Go client
 Go client for Metronome generated from its OpenAPI spec
 

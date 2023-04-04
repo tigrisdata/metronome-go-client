@@ -7,7 +7,7 @@ import (
 
 	"github.com/deepmap/oapi-codegen/pkg/securityprovider"
 
-	"github.com/adilansari/metronome-go-client"
+	"github.com/tigrisdata/metronome-go-client"
 )
 
 func main() {

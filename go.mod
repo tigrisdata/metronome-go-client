@@ -1,4 +1,4 @@
-module github.com/adilansari/metronome-go-client
+module github.com/tigrisdata/metronome-go-client
 
 go 1.20
 
@@ -19,8 +19,4 @@ require (
 	github.com/perimeterx/marshmallow v1.1.4 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-)
-
-retract (
-    v0.1.0 // Incorrect package path
 )

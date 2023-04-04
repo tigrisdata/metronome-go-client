@@ -1,9 +1,3 @@
-[![Go Reference](https://pkg.go.dev/badge/github.com/adilansari/metronome-go-client/cobra.svg)](https://pkg.go.dev/github.com/adilansari/metronome-go-client)
-[![rcard](https://goreportcard.com/badge/github.com/adilansari/metronome-go-client)](https://goreportcard.com/report/github.com/adilansari/metronome-go-client)
-[![License](http://img.shields.io/badge/license-mit-blue.svg?style=flat-square)](https://raw.githubusercontent.com/adilansari/metronome-go-client/main/LICENSE)
-
-[//]: # ([![Sourcegraph]&#40;https://sourcegraph.com/github.com/adilansari/metronome-go-client/-/badge.svg&#41;]&#40;https://sourcegraph.com/github.com/adilansari/metronome-go-client?badge&#41;)
-
 # [Metronome](https://docs.metronome.com/api/) Go client
 Go client for Metronome generated from its OpenAPI spec
 
@@ -16,7 +10,7 @@ marshalling and unmarshalling into objects when using Metronome HTTP APIs.
 
 Install in your project to have it as a dependency in `go.mod`:
 ```shell
-go get github.com/adilansari/metronome-go-client@latest
+go get github.com/tigrisdata/metronome-go-client@latest
 ```
 
 ## Usage
@@ -59,7 +53,7 @@ import (
 
 	"github.com/deepmap/oapi-codegen/pkg/securityprovider"
 
-	"github.com/adilansari/metronome-go-client"
+	"github.com/tigrisdata/metronome-go-client"
 )
 
 func main() {
@@ -108,6 +102,6 @@ func main() {
 
 ## Requesting updates
 - Since this is not official client, the API may be out of date
-- Please open an issue in the repo and I'll try to update the client to latest
+- Please open an issue in the repo and we'll try to update the client to latest
 
 
